@@ -13,12 +13,14 @@ description: |
 - Run verification before commit.
 - Review the diff before commit and again before push.
 - Rebase on the latest remote base branch before pushing when the remote has changed.
+- Open PRs as draft by default.
+- Do not mark a PR ready unless the user explicitly asks or approves it.
 
 Review means:
 
 - read the diff
-- run typecheck if TypeScript source changed
-- run focused tests if logic changed
+- run typecheck before every commit
+- run focused tests before every commit
 - run relevant E2E checks if user-facing flows changed
 
 Recommended sequence:
@@ -31,6 +33,8 @@ Recommended sequence:
 6. `git fetch origin`
 7. `git rebase origin/<base-branch>` when needed
 8. resolve conflicts carefully, re-run checks, then push
+9. `gh pr create --draft ...`
+10. wait for explicit user approval before `gh pr ready`
 
 Helpful commands:
 

@@ -12,6 +12,8 @@ This repository uses a worktree-first git workflow.
   - `codex/chore/<slug>`
 - Review your own diff before commit and before push.
 - Rebase before push when the remote base branch or remote feature branch has changed.
+- Open PRs as drafts by default.
+- Do not mark a PR ready unless the user explicitly asks or approves it.
 
 ## What review means in this repo
 
@@ -19,9 +21,8 @@ Review is not only reading `git diff`.
 
 Before commit or push, review should include the relevant checks for the touched area:
 
-- TypeScript source changed:
+- Always:
   - run typecheck
-- Business logic changed:
   - run focused unit or integration tests
 - User-facing flow changed:
   - run relevant E2E checks
@@ -67,10 +68,11 @@ git rebase origin/<your-branch>
 8. Re-run verification if rebase changed anything.
 9. Review the final diff again.
 10. Push.
+11. Open a draft PR.
 
 ## Verification checklist by change type
 
-- TypeScript/backend/frontend source:
+- Default code changes:
   - `pnpm typecheck`
   - `pnpm test`
 - User-facing workflow:
@@ -78,6 +80,22 @@ git rebase origin/<your-branch>
 - Repo automation or context scripts:
   - run the script directly when possible
   - run `node scripts/sync-codex-context.mjs`
+
+## Draft PR rule
+
+Open PRs as draft first:
+
+```bash
+gh pr create --draft --title "..." --body "..."
+```
+
+Only mark a PR ready when all are true:
+
+1. implementation is complete
+2. typecheck and relevant tests pass
+3. review feedback has been addressed or explicitly deferred
+4. the PR description accurately reflects the diff
+5. the user has explicitly approved moving the PR to ready
 
 ## Conflict resolution
 

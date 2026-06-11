@@ -50,10 +50,13 @@ The repo is intentionally small, but the workflow should already be disciplined:
 - Use a feature branch or worktree. Never commit directly to `main`. See `.codex/rules/git-worktrees.md`.
 - For any new feature, create a new worktree first and implement the feature inside that worktree.
 - Use branch names shaped like `codex/feat/<slug>`, `codex/fix/<slug>`, or `codex/chore/<slug>` unless the task truly needs another class.
-- Prefer local verification before commit: lint, typecheck for TypeScript changes, focused unit/integration tests, and relevant E2E checks for user-facing flow changes.
+- Run `typecheck` before every commit.
+- Run relevant tests before every commit.
+- Add relevant E2E checks when user-facing flows change.
 - Review your own diff before commit and before push.
 - Rebase on the latest remote branch before push when upstream has moved, and re-run verification after resolving conflicts.
 - When writing a commit or draft PR summary, clearly state what changed, why it changed, and how it was verified.
+- Open PRs as drafts by default. Only mark them ready when implementation, verification, and description are all complete, and the user has explicitly approved moving the PR to ready.
 - Capture important architectural decisions or recurring bugs in `.codex/memory/`.
 - Treat transcripts, uploads, and generated CV data as sensitive.
 - New backend and worker flows should emit structured logs with stable identifiers so Codex can investigate failures quickly.
@@ -85,6 +88,7 @@ The repo is intentionally small, but the workflow should already be disciplined:
 13. Rebase before push when the remote branch or base branch has moved.
 14. Re-run checks if rebase or conflict resolution changed behavior.
 15. Review the final diff before push.
+16. Open the PR as draft with a structured description.
 
 ## Useful skill entry points
 
