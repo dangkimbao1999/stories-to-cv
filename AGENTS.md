@@ -99,6 +99,8 @@ The repo is intentionally small, but the workflow should already be disciplined:
 - `.agents/skills/multi-env-dev/SKILL.md`
 - `.agents/skills/deploy/SKILL.md`
 - `.agents/skills/ci/SKILL.md`
+- `.agents/skills/docker-ops/SKILL.md`
+- `.agents/skills/container-log-monitoring/SKILL.md`
 - `.agents/skills/memory/SKILL.md`
 - `.agents/skills/start-dev/SKILL.md`
 - `.agents/skills/investigation/SKILL.md`

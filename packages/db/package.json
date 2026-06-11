@@ -2,7 +2,22 @@
   "name": "@stories/db",
   "private": true,
   "type": "module",
+  "scripts": {
+    "db:generate": "drizzle-kit generate --config drizzle.config.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
   "exports": {
     ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.45.1",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.16.0",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

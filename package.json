@@ -18,6 +18,12 @@
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f postgres",
+    "docker:build": "node scripts/ops/docker.mjs build",
+    "docker:down": "node scripts/ops/docker.mjs down",
+    "docker:logs": "node scripts/ops/docker.mjs logs --follow",
+    "docker:ps": "node scripts/ops/docker.mjs ps",
+    "docker:up": "node scripts/ops/docker.mjs up --build",
+    "ops:docker": "node scripts/ops/docker.mjs",
     "ops:logs": "node scripts/ops/logs.mjs",
     "ops:deploy": "node scripts/ops/deploy.mjs",
     "ops:verify": "node scripts/ops/verify-env.mjs",
@@ -28,8 +34,11 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",
-    "turbo": "^2.5.4",
+    "@types/node": "^25.9.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "tsx": "^4.20.5",
+    "turbo": "^2.5.4",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }

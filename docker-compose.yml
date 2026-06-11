@@ -1,16 +1,64 @@
 services:
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: stories-to-cv-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: stories_to_cv
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d stories_to_cv"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    command: sh -c "pnpm install --frozen-lockfile && pnpm --filter @stories/web dev --hostname 0.0.0.0"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      APP_URL: http://localhost:3000
+      AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID:-}
+      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET:-}
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/stories_to_cv
+      DIRECT_URL: postgres://postgres:postgres@postgres:5432/stories_to_cv
+      NEXT_TELEMETRY_DISABLED: "1"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules
+      - web-next:/app/apps/web/.next
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    command: sh -c "pnpm install --frozen-lockfile && pnpm --filter @stories/worker dev"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/stories_to_cv
+      DIRECT_URL: postgres://postgres:postgres@postgres:5432/stories_to_cv
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules
 
 volumes:
+  node-modules:
   postgres-data:
+  web-next:

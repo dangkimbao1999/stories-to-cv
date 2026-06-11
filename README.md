@@ -16,8 +16,12 @@ This repo is intentionally small. The goal is to move fast with a team and with 
 ## Standard commands
 
 - `pnpm dev:stack`
+- `pnpm ops:docker -- up --build`
+- `pnpm ops:docker -- logs --follow`
+- `pnpm ops:docker -- logs web --follow --tail 80 --timestamps`
 - `pnpm ops:logs -- --env local --service web --follow`
 - `pnpm ops:verify -- local`
+- `pnpm ops:verify -- docker-local`
 - `pnpm ops:ci`
 - `pnpm ops:worktree:create -- codex/feat/my-task`
 - `pnpm test:e2e`
