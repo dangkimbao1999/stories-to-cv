@@ -14,6 +14,13 @@ description: |
 - Review the diff before commit and again before push.
 - Rebase on the latest remote base branch before pushing when the remote has changed.
 
+Review means:
+
+- read the diff
+- run typecheck if TypeScript source changed
+- run focused tests if logic changed
+- run relevant E2E checks if user-facing flows changed
+
 Recommended sequence:
 
 1. `pnpm ops:worktree:create -- codex/feat/feature-name`

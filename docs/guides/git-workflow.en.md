@@ -13,6 +13,21 @@ This repository uses a worktree-first git workflow.
 - Review your own diff before commit and before push.
 - Rebase before push when the remote base branch or remote feature branch has changed.
 
+## What review means in this repo
+
+Review is not only reading `git diff`.
+
+Before commit or push, review should include the relevant checks for the touched area:
+
+- TypeScript source changed:
+  - run typecheck
+- Business logic changed:
+  - run focused unit or integration tests
+- User-facing flow changed:
+  - run relevant E2E checks
+- Docs-only changes:
+  - review diff carefully; no code checks needed unless related scripts/config changed
+
 ## Recommended flow
 
 1. Create a worktree:
@@ -52,6 +67,17 @@ git rebase origin/<your-branch>
 8. Re-run verification if rebase changed anything.
 9. Review the final diff again.
 10. Push.
+
+## Verification checklist by change type
+
+- TypeScript/backend/frontend source:
+  - `pnpm typecheck`
+  - `pnpm test`
+- User-facing workflow:
+  - `pnpm test:e2e`
+- Repo automation or context scripts:
+  - run the script directly when possible
+  - run `node scripts/sync-codex-context.mjs`
 
 ## Conflict resolution
 
