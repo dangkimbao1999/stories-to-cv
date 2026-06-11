@@ -1,0 +1,60 @@
+{
+  "local": {
+    "run": [
+      {
+        "name": "web",
+        "command": "pnpm --filter @stories/web dev"
+      },
+      {
+        "name": "worker",
+        "command": "pnpm --filter @stories/worker dev"
+      }
+    ],
+    "logs": [
+      {
+        "name": "web",
+        "file": ".codex/logs/web.log"
+      },
+      {
+        "name": "worker",
+        "file": ".codex/logs/worker.log"
+      }
+    ],
+    "health": [
+      {
+        "name": "web",
+        "url": "http://127.0.0.1:3000"
+      }
+    ]
+  },
+  "preview": {
+    "deploy": "vercel deploy",
+    "logs": "vercel logs --follow",
+    "verify": [
+      {
+        "name": "preview-web",
+        "url": "https://preview.example.com"
+      }
+    ]
+  },
+  "staging": {
+    "deploy": "vercel deploy --prod=false",
+    "logs": "vercel logs --follow",
+    "verify": [
+      {
+        "name": "staging-web",
+        "url": "https://staging.example.com"
+      }
+    ]
+  },
+  "prod": {
+    "deploy": "vercel deploy --prod",
+    "logs": "vercel logs --follow",
+    "verify": [
+      {
+        "name": "prod-web",
+        "url": "https://stories-to-cv.example.com"
+      }
+    ]
+  }
+}

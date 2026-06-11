@@ -1,0 +1,55 @@
+# Stories to CV
+
+Monorepo scaffold for a conversation-first career knowledge base and CV generation product.
+
+This repo is intentionally small. The goal is to move fast with a team and with coding agents, while keeping a clean domain model, clear package boundaries, and a path to scale later.
+
+## Recommended setup
+
+1. Install Node.js 22+.
+2. Enable Corepack: `corepack enable`
+3. Activate pnpm: `corepack prepare pnpm@10.12.4 --activate`
+4. Install dependencies: `pnpm install`
+5. Start local Postgres: `docker compose up -d postgres`
+6. Copy `.codex/environments.example.json` to `.codex/environments.json` and fill in real environment commands if needed
+
+## Standard commands
+
+- `pnpm dev:stack`
+- `pnpm ops:logs -- --env local --service web --follow`
+- `pnpm ops:verify -- local`
+- `pnpm ops:ci`
+- `pnpm ops:worktree:create -- codex/feat/my-task`
+- `pnpm test:e2e`
+
+## Monorepo layout
+
+```text
+apps/
+  web/        Next.js product app
+  worker/     background jobs for ingestion, extraction, research, export
+packages/
+  ai/         prompts, orchestrators, evaluations
+  contracts/  zod schemas and typed boundaries
+  db/         schema, migrations, repositories
+  domain/     business language and use cases
+  security/   consent, redaction, privacy helpers
+  ui/         shared UI building blocks
+docs/
+  *.md        product, PRD, architecture
+.codex/
+  hooks/      Codex-specific local repo automation
+```
+
+## Default architecture direction
+
+- `apps/web`: Next.js App Router, dashboard, chat, knowledge base editor, CV editor
+- `apps/worker`: async ingestion and generation jobs
+- `packages/domain`: shared business primitives
+- `packages/ai`: AI orchestration without coupling prompt logic to UI or database
+- `packages/db`: Postgres + pgvector data access
+- `packages/security`: privacy and consent logic shared across web and worker
+
+See [docs/solution-architecture.vi.md](C:\Users\dangk\Documents\stories-to-cv\docs\solution-architecture.vi.md) for the full recommendation.
+See [docs/agentic-development-flow.vi.md](C:\Users\dangk\Documents\stories-to-cv\docs\agentic-development-flow.vi.md) for the repo workflow.
+See [docs/guides/start-dev.vi.md](C:\Users\dangk\Documents\stories-to-cv\docs\guides\start-dev.vi.md) for the day-1 developer flow.

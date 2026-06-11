@@ -1,0 +1,36 @@
+{
+  "name": "stories-to-cv",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.12.4",
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "pnpm --filter @stories/web dev",
+    "dev:worker": "pnpm --filter @stories/worker dev",
+    "dev:stack": "node scripts/ops/run-local.mjs",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "format": "biome check --write .",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "test:e2e": "pnpm --filter @stories/e2e test",
+    "test:all": "pnpm test && pnpm test:e2e",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f postgres",
+    "ops:logs": "node scripts/ops/logs.mjs",
+    "ops:deploy": "node scripts/ops/deploy.mjs",
+    "ops:verify": "node scripts/ops/verify-env.mjs",
+    "ops:ci": "node scripts/ops/ci-check.mjs",
+    "ops:worktree:create": "node scripts/ops/worktree-create.mjs",
+    "ops:worktree:remove": "node scripts/ops/worktree-remove.mjs",
+    "ops:memory:add": "node scripts/ops/memory-note.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.6",
+    "turbo": "^2.5.4",
+    "tsx": "^4.20.5",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@stories/ai": ["packages/ai/src/index.ts"],
+      "@stories/contracts": ["packages/contracts/src/index.ts"],
+      "@stories/db": ["packages/db/src/index.ts"],
+      "@stories/domain": ["packages/domain/src/index.ts"],
+      "@stories/security": ["packages/security/src/index.ts"],
+      "@stories/ui": ["packages/ui/src/index.ts"]
+    }
+  }
+}
