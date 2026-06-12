@@ -18,3 +18,5 @@ Use this file as the quick entry point when scanning project history.
   Docker and Compose foundation for running web, worker, and Postgres locally or in server-style mode through a shared ops wrapper and repo-local skill.
 - [2026-06-11-web-route-foundation.md](C:\Users\dangk\Documents\stories-to-cv\docs\plans\2026-06-11-web-route-foundation.md)
   Next.js route foundation for login, onboarding, Knowledge Base, and Generate CV surfaces.
+- [2026-06-12-llm-provider-foundation.md](C:\Users\dangk\Documents\stories-to-cv\docs\plans\2026-06-12-llm-provider-foundation.md)
+  Provider-neutral LLM configuration using `LLM_*` variables with custom OpenAI-compatible endpoints as the default.
