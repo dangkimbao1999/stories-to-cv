@@ -16,11 +16,29 @@ This repo is intentionally small. The goal is to move fast with a team and with 
 ## Standard commands
 
 - `pnpm dev:stack`
+- `pnpm ops:docker -- up --build`
+- `pnpm ops:docker -- logs --follow`
+- `pnpm ops:docker -- logs web --follow --tail 80 --timestamps`
 - `pnpm ops:logs -- --env local --service web --follow`
 - `pnpm ops:verify -- local`
+- `pnpm ops:verify -- docker-local`
 - `pnpm ops:ci`
 - `pnpm ops:worktree:create -- codex/feat/my-task`
 - `pnpm test:e2e`
+
+## LLM provider
+
+The product uses `packages/ai` for provider-neutral LLM configuration. Prefer `LLM_*` variables for new work:
+
+- `LLM_PROVIDER=custom`
+- `LLM_BASE_URL=http://localhost:11434/v1`
+- `LLM_API_KEY=`
+- `LLM_MODEL=llama3.1`
+- `LLM_HEADERS=`
+
+`OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPENAI_MODEL` remain as compatibility fallbacks only. Docker defaults point `LLM_BASE_URL` at `http://host.docker.internal:11434/v1` so a local OpenAI-compatible server such as Ollama, vLLM, LiteLLM, or a private gateway can be used without changing product code.
+
+Runtime model creation should go through `createLlmProviderConfig()` and `createLlmLanguageModel()` from `@stories/ai`. The model factory uses the Vercel AI SDK OpenAI-compatible provider, so custom gateways only need an OpenAI-compatible `/v1` API surface.
 
 ## Monorepo layout
 

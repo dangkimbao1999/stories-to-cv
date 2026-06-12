@@ -67,7 +67,7 @@ The repo is intentionally small, but the workflow should already be disciplined:
 - Frontend: `Next.js`
 - Database: `Postgres` + `pgvector`
 - Async jobs: `pg-boss` in `apps/worker`
-- AI SDK: Vercel `ai` SDK with structured outputs
+- AI SDK: Vercel `ai` SDK with structured outputs behind the `packages/ai` provider abstraction; prefer `LLM_*` custom provider config over direct OpenAI coupling
 - Observability: `Sentry` + `PostHog`
 - E2E: `Playwright`
 
@@ -99,6 +99,8 @@ The repo is intentionally small, but the workflow should already be disciplined:
 - `.agents/skills/multi-env-dev/SKILL.md`
 - `.agents/skills/deploy/SKILL.md`
 - `.agents/skills/ci/SKILL.md`
+- `.agents/skills/docker-ops/SKILL.md`
+- `.agents/skills/container-log-monitoring/SKILL.md`
 - `.agents/skills/memory/SKILL.md`
 - `.agents/skills/start-dev/SKILL.md`
 - `.agents/skills/investigation/SKILL.md`

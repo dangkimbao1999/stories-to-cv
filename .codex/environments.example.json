@@ -27,6 +27,31 @@
       }
     ]
   },
+  "docker-local": {
+    "run": [
+      {
+        "name": "docker",
+        "command": "pnpm ops:docker -- up --build"
+      }
+    ],
+    "logs": "pnpm ops:docker -- logs --follow",
+    "health": [
+      {
+        "name": "docker-web",
+        "url": "http://127.0.0.1:3000"
+      }
+    ]
+  },
+  "docker-server": {
+    "deploy": "pnpm ops:docker -- up --env server --build",
+    "logs": "pnpm ops:docker -- logs --env server --follow",
+    "verify": [
+      {
+        "name": "server-web",
+        "url": "http://127.0.0.1:3000"
+      }
+    ]
+  },
   "preview": {
     "deploy": "vercel deploy",
     "logs": "vercel logs --follow",

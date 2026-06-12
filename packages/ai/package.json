@@ -6,7 +6,17 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai-compatible": "0.2.16",
     "ai": "^4.3.19",
     "zod": "^3.25.67"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   }
 }
