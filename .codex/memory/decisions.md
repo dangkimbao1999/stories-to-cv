@@ -10,3 +10,9 @@
 - AI orchestration should read model/provider settings through `packages/ai` and `LLM_*` environment variables. `OPENAI_*` variables are compatibility fallbacks only.
 - The default provider is `custom`, using an OpenAI-compatible base URL so local gateways, private hosted gateways, Ollama, vLLM, LiteLLM, OpenRouter, or future provider adapters can be swapped without changing product flows.
 - Runtime LLM calls should use `createLlmLanguageModel()` from `@stories/ai`, which wraps the Vercel AI SDK OpenAI-compatible provider.
+
+## 2026-06-12 Superpowers-inspired operating model
+
+- The repo adapts selected workflow ideas from `obra/superpowers` as repo-local `.agents/skills` rather than installing a global plugin.
+- Imported workflows are rewritten around Stories to CV conventions: worktree-first development, `docs/plans`, TDD, privacy constraints, pnpm/turbo verification, and draft PRs.
+- `scripts/sync-codex-context.mjs` validates that required operating-model skills remain present.

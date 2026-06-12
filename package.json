@@ -12,7 +12,7 @@
     "lint": "turbo lint",
     "format": "biome check --write .",
     "typecheck": "turbo typecheck",
-    "test": "turbo test",
+    "test": "turbo test --filter=!@stories/e2e",
     "test:e2e": "pnpm --filter @stories/e2e test",
     "test:all": "pnpm test && pnpm test:e2e",
     "db:up": "docker compose up -d postgres",

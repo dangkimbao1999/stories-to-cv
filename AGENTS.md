@@ -23,6 +23,7 @@ The repo is intentionally small, but the workflow should already be disciplined:
 - `scripts/ops/` contains run, logs, deploy, verify, CI, and worktree utilities
 - `tests/e2e/` contains Playwright end-to-end tests
 - `docs/plans/` contains the execution history of the project and must be reviewed before starting non-trivial feature work
+- `docs/third-party/` contains attribution for external workflow ideas adapted into this repo
 
 ## Core product constraints
 
@@ -74,7 +75,7 @@ The repo is intentionally small, but the workflow should already be disciplined:
 ## Standard workflow
 
 1. Create or enter a worktree for the task.
-2. Read the relevant rules or skills before making non-trivial changes.
+2. Use `.agents/skills/using-stories-to-cv-skills/SKILL.md` to select relevant skills before making non-trivial changes.
 3. Review related files in `docs/plans/` so new work builds on previous decisions instead of rediscovering them.
 4. Write failing tests first.
 5. Implement the minimum change to pass.
@@ -92,10 +93,15 @@ The repo is intentionally small, but the workflow should already be disciplined:
 
 ## Useful skill entry points
 
+- `.agents/skills/using-stories-to-cv-skills/SKILL.md`
+- `.agents/skills/brainstorming-specs/SKILL.md`
 - `.agents/skills/tdd/SKILL.md`
 - `.agents/skills/e2e-testing/SKILL.md`
 - `.agents/skills/debugging/SKILL.md`
 - `.agents/skills/git-workflow/SKILL.md`
+- `.agents/skills/executing-plans/SKILL.md`
+- `.agents/skills/subagent-driven-development/SKILL.md`
+- `.agents/skills/dispatching-parallel-agents/SKILL.md`
 - `.agents/skills/multi-env-dev/SKILL.md`
 - `.agents/skills/deploy/SKILL.md`
 - `.agents/skills/ci/SKILL.md`
@@ -105,6 +111,11 @@ The repo is intentionally small, but the workflow should already be disciplined:
 - `.agents/skills/start-dev/SKILL.md`
 - `.agents/skills/investigation/SKILL.md`
 - `.agents/skills/plan-writing/SKILL.md`
+- `.agents/skills/requesting-code-review/SKILL.md`
+- `.agents/skills/receiving-code-review/SKILL.md`
+- `.agents/skills/verification-before-completion/SKILL.md`
+- `.agents/skills/finishing-development-branch/SKILL.md`
+- `.agents/skills/skill-authoring/SKILL.md`
 - `.agents/skills/commit-and-pr-writing/SKILL.md`
 
 ## Security expectations

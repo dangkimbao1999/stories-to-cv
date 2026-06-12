@@ -20,3 +20,5 @@ Use this file as the quick entry point when scanning project history.
   Next.js route foundation for login, onboarding, Knowledge Base, and Generate CV surfaces.
 - [2026-06-12-llm-provider-foundation.md](C:\Users\dangk\Documents\stories-to-cv\docs\plans\2026-06-12-llm-provider-foundation.md)
   Provider-neutral LLM configuration using `LLM_*` variables with custom OpenAI-compatible endpoints as the default.
+- [2026-06-12-superpowers-operating-model.md](C:\Users\dangk\Documents\stories-to-cv\docs\plans\2026-06-12-superpowers-operating-model.md)
+  Adapts useful `obra/superpowers` workflows into repo-local skills with attribution and validation.
