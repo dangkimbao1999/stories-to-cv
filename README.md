@@ -40,6 +40,14 @@ The product uses `packages/ai` for provider-neutral LLM configuration. Prefer `L
 
 Runtime model creation should go through `createLlmProviderConfig()` and `createLlmLanguageModel()` from `@stories/ai`. The model factory uses the Vercel AI SDK OpenAI-compatible provider, so custom gateways only need an OpenAI-compatible `/v1` API surface.
 
+## Agentic workflow
+
+This repo keeps a Codex-first operating model in `.agents/skills`, `.codex/agents`, `.codex/rules`, and `scripts/ops`.
+
+The local skill library includes Superpowers-inspired workflows adapted for Stories to CV: skill selection, brainstorming/specs, plan execution, subagent coordination, code review, verification gates, and branch finishing. Start with `.agents/skills/using-stories-to-cv-skills/SKILL.md` when deciding how Codex should approach a task.
+
+Attribution for the upstream workflow ideas is recorded in `docs/third-party/superpowers.md`.
+
 ## Monorepo layout
 
 ```text
@@ -57,6 +65,8 @@ docs/
   *.md        product, PRD, architecture
 .codex/
   hooks/      Codex-specific local repo automation
+.agents/
+  skills/     repo-local agent workflows
 ```
 
 ## Default architecture direction
