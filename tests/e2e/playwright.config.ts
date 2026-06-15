@@ -6,6 +6,9 @@ export default defineConfig({
   webServer: {
     command: "pnpm --filter @stories/web dev",
     cwd: "../..",
+    env: {
+      E2E_AUTH_BYPASS: "1",
+    },
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     url: "http://127.0.0.1:3000",
