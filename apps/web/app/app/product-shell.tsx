@@ -14,19 +14,25 @@ export function ProductShell({ children }: { children: ReactNode }) {
 
   return (
     <main className="app-shell">
-      <aside className="sidebar" aria-label="Main navigation">
-        <div>
-          <p className="eyebrow">Stories to CV</p>
-          <h1>Workspace</h1>
-        </div>
-        <nav className="nav-stack">
+      <header className="topbar">
+        <Link className="brand-lockup" href="/app/knowledge-base" aria-label="Stories to CV home">
+          <span className="brand-mark">S</span>
+          <span>Stories to CV</span>
+        </Link>
+        <nav className="nav-stack" aria-label="Main navigation">
           {navItems.map((item) => (
             <Link key={item.href} aria-current={pathname === item.href ? "page" : undefined} href={item.href}>
               {item.label}
             </Link>
           ))}
         </nav>
-      </aside>
+        <div className="topbar-actions">
+          <Link href="/app/knowledge-base/session-ai-impact">Open chat</Link>
+          <Link className="primary-action compact gradient-action" href="/app/knowledge-base/new">
+            New session
+          </Link>
+        </div>
+      </header>
       <section className="content-area">{children}</section>
     </main>
   );
