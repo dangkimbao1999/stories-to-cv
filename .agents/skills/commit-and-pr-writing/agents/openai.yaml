@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit and PR Writing"
+  short_description: "Write durable commits and draft PRs"
+  default_prompt: "Use $commit-and-pr-writing to write a commit message and draft PR summary that future work can understand."
