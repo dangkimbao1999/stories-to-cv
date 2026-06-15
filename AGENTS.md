@@ -4,26 +4,20 @@
 
 This repository is a Codex-first monorepo for an AI product that helps users build a private career knowledge base and generate job-targeted CVs from it.
 
-The repo is intentionally small, but the workflow should already be disciplined:
+For the current phase, keep the agent operating model small. Use only the rules, skills, and agents needed for:
 
-- TDD by default
-- E2E coverage for user-facing flows
-- worktree-based git workflow
-- clear environment and deployment procedures
-- explicit memory and decision capture
-- privacy and auditability as product-level constraints
+- TDD
+- git branches and worktrees
+- local development startup
+- local log monitoring
 
 ## Canonical directories
 
-- `.codex/agents/` contains role prompts for focused Codex sub-agents
-- `.agents/skills/` contains reusable workflow guides
-- `.codex/rules/` contains repository rules and guardrails
-- `.codex/memory/` contains durable project memory
-- `.codex/worktrees/` is the default location for additional git worktrees
-- `scripts/ops/` contains run, logs, deploy, verify, CI, and worktree utilities
-- `tests/e2e/` contains Playwright end-to-end tests
-- `docs/plans/` contains the execution history of the project and must be reviewed before starting non-trivial feature work
-- `docs/third-party/` contains attribution for external workflow ideas adapted into this repo
+- `.agents/skills/` contains the active repo-local workflow guides.
+- `.codex/agents/` contains the active focused agent prompts.
+- `.codex/rules/` contains mandatory repo rules.
+- `.codex/worktrees/` is the default location for additional git worktrees.
+- `scripts/ops/` contains local run, log, verify, and worktree utilities.
 
 ## Core product constraints
 
@@ -42,85 +36,40 @@ The repo is intentionally small, but the workflow should already be disciplined:
 - `packages/ai` owns prompts, evaluators, structured output parsers, and orchestration logic.
 - `packages/security` owns consent, redaction, audit, and data handling policies.
 - `packages/ui` owns presentational primitives shared inside the product.
-- `tests/e2e` owns browser-level end-to-end coverage.
 
-## Mandatory engineering rules
+## Mandatory Engineering Rules
 
 - Follow red/green/refactor for every source change. See `.codex/rules/tdd.md`.
-- Keep user-facing flows E2E testable and add Playwright coverage for major scenarios. See `.codex/rules/e2e.md`.
-- Use a feature branch or worktree. Never commit directly to `main`. See `.codex/rules/git-worktrees.md`.
-- For any new feature, create a new worktree first and implement the feature inside that worktree.
-- Use branch names shaped like `codex/feat/<slug>`, `codex/fix/<slug>`, or `codex/chore/<slug>` unless the task truly needs another class.
-- Run `typecheck` before every commit.
-- Run relevant tests before every commit.
-- Add relevant E2E checks when user-facing flows change.
-- Review your own diff before commit and before push.
-- Rebase on the latest remote branch before push when upstream has moved, and re-run verification after resolving conflicts.
-- When writing a commit or draft PR summary, clearly state what changed, why it changed, and how it was verified.
-- Open PRs as drafts by default. Only mark them ready when implementation, verification, and description are all complete, and the user has explicitly approved moving the PR to ready.
-- Capture important architectural decisions or recurring bugs in `.codex/memory/`.
-- Treat transcripts, uploads, and generated CV data as sensitive.
-- New backend and worker flows should emit structured logs with stable identifiers so Codex can investigate failures quickly.
+- Before starting a new feature, fetch the latest `main` from origin.
+- Create a new worktree from the latest `origin/main` for every new feature or fix. See `.codex/rules/git-worktrees.md`.
+- Never commit directly to `main`.
+- Use branch names shaped like `codex/feat/<slug>`, `codex/fix/<slug>`, or `codex/chore/<slug>`.
+- Run focused tests during development and relevant checks before commit.
+- Use local run and log wrappers when starting or monitoring the app. See `.codex/rules/local-development.md`.
+- Before pushing a branch, fetch `origin/main` and rebase on it.
+- Treat transcripts, uploads, job descriptions, generated CVs, and conversation history as sensitive data.
 
-## Default stack
+## Standard Workflow
 
-- Workspace: `pnpm` + `turbo`
-- Frontend: `Next.js`
-- Database: `Postgres` + `pgvector`
-- Async jobs: `pg-boss` in `apps/worker`
-- AI SDK: Vercel `ai` SDK with structured outputs behind the `packages/ai` provider abstraction; prefer `LLM_*` custom provider config over direct OpenAI coupling
-- Observability: `Sentry` + `PostHog`
-- E2E: `Playwright`
+1. Fetch latest main: `git fetch origin main`.
+2. Create a worktree from `origin/main`: `pnpm ops:worktree:create -- codex/feat/<slug>`.
+3. Enter the worktree and use TDD: write or tighten a failing test, implement the minimum change, refactor while green.
+4. Start local services with `pnpm dev:stack` or `pnpm ops:run -- --env local`.
+5. Monitor logs with `pnpm ops:logs -- --env local --service web --follow` or `pnpm ops:logs -- --env local --service worker --follow`.
+6. Run focused tests and relevant verification before commit.
+7. Review the diff, stage explicit files, and commit on the feature branch.
+8. Before pushing, run `git fetch origin main` and `git rebase origin/main`.
 
-## Standard workflow
+## Active Skills
 
-1. Create or enter a worktree for the task.
-2. Use `.agents/skills/using-stories-to-cv-skills/SKILL.md` to select relevant skills before making non-trivial changes.
-3. Review related files in `docs/plans/` so new work builds on previous decisions instead of rediscovering them.
-4. Write failing tests first.
-5. Implement the minimum change to pass.
-6. Run local verification.
-7. Update memory when the task changes how the repo should be understood.
-8. Add or update a plan in `docs/plans/` when the task is non-trivial.
-9. Review the diff before commit.
-10. Run the relevant checks for the touched area.
-11. Stage explicit files only.
-12. Commit with a clear message after checks pass.
-13. Rebase before push when the remote branch or base branch has moved.
-14. Re-run checks if rebase or conflict resolution changed behavior.
-15. Review the final diff before push.
-16. Open the PR as draft with a structured description.
-
-## Useful skill entry points
-
-- `.agents/skills/using-stories-to-cv-skills/SKILL.md`
-- `.agents/skills/brainstorming-specs/SKILL.md`
 - `.agents/skills/tdd/SKILL.md`
-- `.agents/skills/e2e-testing/SKILL.md`
-- `.agents/skills/debugging/SKILL.md`
 - `.agents/skills/git-workflow/SKILL.md`
-- `.agents/skills/executing-plans/SKILL.md`
-- `.agents/skills/subagent-driven-development/SKILL.md`
-- `.agents/skills/dispatching-parallel-agents/SKILL.md`
-- `.agents/skills/multi-env-dev/SKILL.md`
-- `.agents/skills/deploy/SKILL.md`
-- `.agents/skills/ci/SKILL.md`
-- `.agents/skills/docker-ops/SKILL.md`
-- `.agents/skills/container-log-monitoring/SKILL.md`
-- `.agents/skills/memory/SKILL.md`
 - `.agents/skills/start-dev/SKILL.md`
-- `.agents/skills/investigation/SKILL.md`
-- `.agents/skills/plan-writing/SKILL.md`
-- `.agents/skills/requesting-code-review/SKILL.md`
-- `.agents/skills/receiving-code-review/SKILL.md`
-- `.agents/skills/verification-before-completion/SKILL.md`
-- `.agents/skills/finishing-development-branch/SKILL.md`
-- `.agents/skills/skill-authoring/SKILL.md`
-- `.agents/skills/commit-and-pr-writing/SKILL.md`
+- `.agents/skills/logs/SKILL.md`
 
-## Security expectations
+## Active Agents
 
-- Private user data must stay isolated per user.
-- Do not move private user data into shared public knowledge packs.
-- Prefer explicit consent and auditability over hidden automation.
-- Treat imported resumes, job descriptions, and conversation history as sensitive data.
+- `.codex/agents/test-police.md`
+- `.codex/agents/git-worktree-police.md`
+- `.codex/agents/run-operator.md`
+- `.codex/agents/log-watcher.md`
