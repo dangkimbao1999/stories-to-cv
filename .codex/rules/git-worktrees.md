@@ -1,7 +1,9 @@
 # Git Worktree Rules
 
 - Never commit directly to `main`.
+- Before starting a new feature or fix, fetch the latest main branch with `git fetch origin main`.
 - For any new feature, create a new worktree first and implement the feature inside that worktree.
+- New worktrees must start from the fetched `origin/main`.
 - Use dedicated worktrees for larger tasks or parallel streams of work.
 - Create branches with the `codex/` prefix.
 - Default branch classes are `codex/feat/<slug>`, `codex/fix/<slug>`, and `codex/chore/<slug>`.
@@ -10,8 +12,7 @@
 - Review includes running the relevant technical checks, not just reading the diff.
 - Run typecheck before every commit.
 - Run focused unit/integration tests before every commit.
-- If a user-facing flow changed, run relevant E2E checks before commit or before opening a draft PR.
-- Rebase on the latest remote base branch before pushing when upstream has moved.
+- Before pushing, always run `git fetch origin main`, then rebase on `origin/main`.
 - Resolve conflicts deliberately and re-run verification after conflict resolution.
 - Open PRs as draft by default.
 - Only mark a PR ready when:

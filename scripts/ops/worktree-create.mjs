@@ -23,9 +23,17 @@ if (existsSync(worktreePath)) {
   process.exit(1);
 }
 
-const result = spawnSync(`git worktree add "${worktreePath}" -b "${branch}"`, {
+const fetch = spawnSync("git", ["fetch", "origin", "main"], {
   cwd: process.cwd(),
-  shell: true,
+  stdio: "inherit"
+});
+
+if ((fetch.status ?? 0) !== 0) {
+  process.exit(fetch.status ?? 1);
+}
+
+const result = spawnSync("git", ["worktree", "add", worktreePath, "-b", branch, "origin/main"], {
+  cwd: process.cwd(),
   stdio: "inherit"
 });
 
