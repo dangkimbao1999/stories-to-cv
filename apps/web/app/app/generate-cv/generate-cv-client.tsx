@@ -39,59 +39,97 @@ export function GenerateCvClient() {
   }
 
   return (
-    <div className="section-stack">
-      <header className="section-header">
+    <div className="workspace-stack">
+      <header className="workspace-header">
         <div>
-          <p className="eyebrow">Generate CV</p>
-          <h2>CV generation sessions</h2>
+          <p className="system-label">CV Lab</p>
+          <h1>CV Lab: Targeted Strategy</h1>
+          <p>Compare your raw assets against specific job requirements before generating a version.</p>
         </div>
         <button className="primary-action compact" type="button" onClick={generateCv}>
           Generate CV
         </button>
       </header>
 
-      <section className="workspace-panel" aria-label="JD intake">
-        <div>
-          <p className="eyebrow">JD intake</p>
-          <h2>Target job</h2>
+      <section className="cv-lab-grid">
+        <div className="workspace-panel">
+          <div className="panel-heading">
+            <h2>Target job</h2>
+            <span className="status-pill">Paste Text</span>
+          </div>
+          <label>
+            JD link
+            <input onChange={(event) => setJdUrl(event.target.value)} value={jdUrl} />
+          </label>
+          <label>
+            JD text
+            <textarea aria-label="JD text" onChange={(event) => setJdText(event.target.value)} value={jdText} />
+          </label>
+          <div className="button-row">
+            <button type="button">Parse</button>
+            <button className="primary-action compact" type="button">
+              Extract Requirements
+            </button>
+          </div>
         </div>
-        <label>
-          JD link
-          <input onChange={(event) => setJdUrl(event.target.value)} value={jdUrl} />
-        </label>
-        <label>
-          JD text
-          <textarea aria-label="JD text" onChange={(event) => setJdText(event.target.value)} value={jdText} />
-        </label>
+
+        <div className="workspace-panel">
+          <div className="panel-heading">
+            <h2>Role summary</h2>
+            <span className="status-pill muted">Stripe</span>
+          </div>
+          <dl className="summary-list">
+            <div>
+              <dt>Company</dt>
+              <dd>Stripe</dd>
+            </div>
+            <div>
+              <dt>Role</dt>
+              <dd>Senior Product Manager</dd>
+            </div>
+            <div>
+              <dt>Seniority</dt>
+              <dd>Senior</dd>
+            </div>
+          </dl>
+        </div>
       </section>
 
       <section className="workspace-panel" aria-label="Research and strategy">
-        <div>
-          <p className="eyebrow">Research summary</p>
-          <h2>Company and role findings</h2>
+        <div className="panel-heading">
+          <div>
+            <p className="system-label">Knowledge Base Match</p>
+            <h2>Strategy preview</h2>
+          </div>
+          <button type="button">Refresh match</button>
         </div>
         <p>{preview.companyFindings}</p>
-        <div className="checklist">
-          {preview.missingInfoChecklist.map((item) => (
-            <label key={item}>
-              <input type="checkbox" />
-              <span>{item}</span>
-            </label>
-          ))}
+        <div className="strategy-grid">
+          <div>
+            <h3>Actionable gaps</h3>
+            <div className="checklist">
+              {preview.missingInfoChecklist.map((item) => (
+                <label key={item}>
+                  <input type="checkbox" />
+                  <span>{item}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+          <label>
+            Refinement notes
+            <textarea
+              aria-label="Refinement notes"
+              onChange={(event) => setRefinementNotes(event.target.value)}
+              value={refinementNotes}
+            />
+          </label>
         </div>
-        <label>
-          Refinement notes
-          <textarea
-            aria-label="Refinement notes"
-            onChange={(event) => setRefinementNotes(event.target.value)}
-            value={refinementNotes}
-          />
-        </label>
       </section>
 
       <section className="workspace-panel" aria-label="Generated CV versions">
         <div>
-          <p className="eyebrow">Template V1</p>
+          <p className="system-label">Template V1</p>
           <h2>Generated CV versions</h2>
         </div>
         {versions.length > 0 ? (

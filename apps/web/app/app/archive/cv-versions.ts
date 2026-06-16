@@ -1,0 +1,30 @@
+export const cvVersions = [
+  {
+    company: "Stripe",
+    date: "Generated Oct 24, 2023",
+    featured: true,
+    icon: "apartment",
+    match: "94% Match",
+    role: "Senior PM, Payments",
+    slug: "stripe",
+    strategy: "ATS-Optimized",
+  },
+  {
+    company: "Meta",
+    date: "Generated Oct 15, 2023",
+    icon: "diversity_3",
+    match: "88% Match",
+    role: "Lead Product Designer",
+    slug: "meta",
+    strategy: "Recruiter-First",
+  },
+  {
+    company: "Airbnb",
+    date: "Generated Sep 28, 2023",
+    icon: "home_work",
+    match: "85% Match",
+    role: "Product Growth Mgr",
+    slug: "airbnb",
+    strategy: "Creative Format",
+  },
+];
