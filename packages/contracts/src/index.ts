@@ -76,3 +76,76 @@ export const cvGenerationRequestSchema = z
   });
 
 export type CvGenerationRequestInput = z.infer<typeof cvGenerationRequestSchema>;
+
+const nonEmptyStringArraySchema = z.array(z.string().min(1)).min(1);
+
+export const industryMetricCategorySchema = z.enum(["business", "product", "risk", "operations", "people"]);
+
+export const industryWorkflowContextSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  typicalSteps: nonEmptyStringArraySchema,
+  commonMetrics: nonEmptyStringArraySchema,
+});
+
+export const industryMetricContextSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  category: industryMetricCategorySchema,
+});
+
+export const industryContextPackSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  version: z.number().int().positive(),
+  active: z.boolean(),
+  summary: z.string().min(1),
+  businessModels: nonEmptyStringArraySchema,
+  coreWorkflows: z.array(industryWorkflowContextSchema).min(1),
+  keyMetrics: z.array(industryMetricContextSchema).min(1),
+  stakeholders: nonEmptyStringArraySchema,
+  commonTools: nonEmptyStringArraySchema,
+  regulatoryConcerns: nonEmptyStringArraySchema,
+  achievementPatterns: nonEmptyStringArraySchema,
+  discoveryQuestions: nonEmptyStringArraySchema,
+  guardrails: nonEmptyStringArraySchema,
+});
+
+export type IndustryContextPackInput = z.infer<typeof industryContextPackSchema>;
+
+export const roleSeniorityContextSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  expectedScope: nonEmptyStringArraySchema,
+});
+
+export const roleContextPackSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  version: z.number().int().positive(),
+  active: z.boolean(),
+  seniorityLevels: z.array(roleSeniorityContextSchema).min(1),
+  coreResponsibilities: nonEmptyStringArraySchema,
+  impactDimensions: nonEmptyStringArraySchema,
+  storyPrompts: nonEmptyStringArraySchema,
+});
+
+export type RoleContextPackInput = z.infer<typeof roleContextPackSchema>;
+
+export const careerFactSchema = z.object({
+  id: entityIdSchema,
+  userId: entityIdSchema,
+  type: z.enum(["achievement", "responsibility", "skill", "context"]),
+  userClaim: z.string().min(1),
+  context: z.object({
+    industryId: entityIdSchema,
+    roleId: entityIdSchema,
+    workflowId: entityIdSchema.optional(),
+  }),
+  evidenceStatus: z.enum(["user_stated", "source_supported", "needs_confirmation"]),
+  sensitivity: z.enum(["private", "shareable"]),
+  cvRelevance: nonEmptyStringArraySchema,
+  createdAt: z.string().datetime(),
+});
+
+export type CareerFactInput = z.infer<typeof careerFactSchema>;

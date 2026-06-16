@@ -90,6 +90,105 @@ export function createLlmLanguageModel(
   return provider.chatModel(config.model);
 }
 
+export const industryAwareCareerAssistantPolicy = [
+  "You are an industry-aware career knowledge assistant.",
+  "The user's personal knowledge base is the source of truth.",
+  "Use industry, role, seniority, and target job context only to ask better questions and suggest angles.",
+  "Never invent achievements, metrics, employers, tools, regulations, or responsibilities.",
+  "When a framing is not verified by the user, mark it as a hypothesis and ask for confirmation.",
+  "Treat transcripts, uploads, generated CVs, and conversation history as private career data.",
+].join("\n");
+
+export interface ConversationBriefWorkflow {
+  id: string;
+  label: string;
+  typicalSteps: string[];
+  commonMetrics: string[];
+}
+
+export interface ConversationBriefMetric {
+  id: string;
+  label: string;
+  category: string;
+}
+
+export interface ConversationBriefIndustry {
+  id: string;
+  label: string;
+  summary: string;
+  coreWorkflows: ConversationBriefWorkflow[];
+  keyMetrics: ConversationBriefMetric[];
+  stakeholders: string[];
+  achievementPatterns: string[];
+  discoveryQuestions: string[];
+  guardrails: string[];
+}
+
+export interface ConversationBriefSeniority {
+  id: string;
+  label: string;
+  expectedScope: string[];
+}
+
+export interface ConversationBriefRole {
+  id: string;
+  label: string;
+  seniorityLevels: ConversationBriefSeniority[];
+  coreResponsibilities: string[];
+  impactDimensions: string[];
+  storyPrompts: string[];
+}
+
+export interface BuildIndustryAwareConversationBriefInput {
+  userRoleLabel: string;
+  targetRoleLabel?: string;
+  seniorityId?: string;
+  industry: ConversationBriefIndustry;
+  role: ConversationBriefRole;
+  targetJobSignals?: string[];
+}
+
+export interface IndustryAwareConversationBrief {
+  userRoleLabel: string;
+  targetRoleLabel?: string;
+  industryLabel: string;
+  roleLabel: string;
+  seniorityScope: string[];
+  usefulAngles: string[];
+  nextBestQuestions: string[];
+  avoid: string[];
+}
+
+export function buildIndustryAwareConversationBrief(
+  input: BuildIndustryAwareConversationBriefInput,
+): IndustryAwareConversationBrief {
+  const seniority =
+    input.role.seniorityLevels.find((level) => level.id === input.seniorityId) ?? input.role.seniorityLevels[0];
+  const workflows = input.industry.coreWorkflows.slice(0, 1).map((workflow) => `workflow: ${workflow.label}`);
+  const metrics = input.industry.keyMetrics.slice(0, 2).map((metric) => `metric: ${metric.label}`);
+  const stakeholders = input.industry.stakeholders.slice(0, 1).map((stakeholder) => `stakeholder: ${stakeholder}`);
+  const impacts = input.role.impactDimensions.slice(0, 2).map((impact) => `impact: ${impact}`);
+  const targetSignals = (input.targetJobSignals ?? []).slice(0, 3).map((signal) => `target: ${signal}`);
+
+  return {
+    userRoleLabel: input.userRoleLabel,
+    ...(input.targetRoleLabel ? { targetRoleLabel: input.targetRoleLabel } : {}),
+    industryLabel: input.industry.label,
+    roleLabel: input.role.label,
+    seniorityScope: seniority?.expectedScope ?? [],
+    usefulAngles: uniqueStrings([...workflows, ...metrics, ...stakeholders, ...impacts, ...targetSignals]),
+    nextBestQuestions: uniqueStrings([
+      ...input.industry.discoveryQuestions.slice(0, 2),
+      ...input.role.storyPrompts.slice(0, 2),
+    ]).slice(0, 3),
+    avoid: uniqueStrings([
+      ...input.industry.guardrails,
+      "Treat the user's personal knowledge base as the source of truth.",
+      "Mark unverified framings as hypotheses and ask for confirmation.",
+    ]),
+  };
+}
+
 function resolveProvider(env: LlmProviderEnv): LlmProviderId {
   const requestedProvider = env.LLM_PROVIDER?.trim();
 
@@ -125,4 +224,8 @@ function readFirst(env: LlmProviderEnv, ...keys: string[]): string | undefined {
   }
 
   return undefined;
+}
+
+function uniqueStrings(values: string[]): string[] {
+  return [...new Set(values.filter((value) => value.trim().length > 0))];
 }
