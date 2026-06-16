@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  careerFactSchema,
   createChatSessionSchema,
   cvGenerationRequestSchema,
+  industryContextPackSchema,
   onboardingResponseSchema,
+  roleContextPackSchema,
   saveSessionToKnowledgeBaseSchema,
   sessionSourceInputSchema,
   updateSessionKnowledgeBaseSelectionSchema,
@@ -100,5 +103,106 @@ describe("cvGenerationRequestSchema", () => {
       refinementNotes: "Emphasize RAG systems.",
       templateId: "simple-v1",
     });
+  });
+});
+
+describe("industryContextPackSchema", () => {
+  it("requires the fields the chatbot needs to ask context-aware questions safely", () => {
+    const pack = industryContextPackSchema.parse({
+      id: "fintech",
+      label: "Fintech",
+      version: 1,
+      active: true,
+      summary: "Financial products delivered through software.",
+      businessModels: ["Payments", "Lending"],
+      coreWorkflows: [
+        {
+          id: "user-onboarding",
+          label: "User onboarding",
+          typicalSteps: ["KYC", "Risk scoring", "Account activation"],
+          commonMetrics: ["conversion rate", "KYC pass rate"],
+        },
+      ],
+      keyMetrics: [
+        { id: "fraud-rate", label: "Fraud rate", category: "risk" },
+        { id: "activation", label: "Activation", category: "product" },
+      ],
+      stakeholders: ["risk team", "compliance", "engineering"],
+      commonTools: ["KYC providers", "payment gateways"],
+      regulatoryConcerns: ["KYC/AML", "data privacy"],
+      achievementPatterns: ["Reduced onboarding drop-off by X%"],
+      discoveryQuestions: ["Did you influence conversion, approval rate, fraud, or compliance?"],
+      guardrails: ["Do not invent metrics or regulated responsibilities."],
+    });
+
+    expect(pack.coreWorkflows[0]?.commonMetrics).toContain("conversion rate");
+    expect(pack.guardrails).toContain("Do not invent metrics or regulated responsibilities.");
+  });
+
+  it("rejects packs without discovery questions or guardrails", () => {
+    expect(() =>
+      industryContextPackSchema.parse({
+        id: "thin-pack",
+        label: "Thin pack",
+        version: 1,
+        active: true,
+        summary: "Too sparse.",
+        businessModels: ["Services"],
+        coreWorkflows: [],
+        keyMetrics: [],
+        stakeholders: [],
+        commonTools: [],
+        regulatoryConcerns: [],
+        achievementPatterns: [],
+        discoveryQuestions: [],
+        guardrails: [],
+      }),
+    ).toThrow();
+  });
+});
+
+describe("roleContextPackSchema", () => {
+  it("captures responsibilities, seniority scope, impact dimensions, and story prompts", () => {
+    const pack = roleContextPackSchema.parse({
+      id: "product-manager",
+      label: "Product Manager",
+      version: 1,
+      active: true,
+      seniorityLevels: [
+        {
+          id: "senior",
+          label: "Senior",
+          expectedScope: ["strategy", "cross-functional leadership", "roadmap ownership"],
+        },
+      ],
+      coreResponsibilities: ["problem discovery", "prioritization"],
+      impactDimensions: ["activation", "retention"],
+      storyPrompts: ["Have you changed a roadmap based on data?"],
+    });
+
+    expect(pack.seniorityLevels[0]?.expectedScope).toContain("strategy");
+  });
+});
+
+describe("careerFactSchema", () => {
+  it("keeps user claims private and provenance-aware by default", () => {
+    const fact = careerFactSchema.parse({
+      id: "fact-1",
+      userId: "user-1",
+      type: "achievement",
+      userClaim: "Reduced onboarding drop-off from 42% to 28%.",
+      context: {
+        industryId: "fintech",
+        roleId: "product-manager",
+        workflowId: "user-onboarding",
+      },
+      evidenceStatus: "user_stated",
+      sensitivity: "private",
+      cvRelevance: ["conversion optimization"],
+      createdAt: "2026-06-16T09:00:00.000Z",
+    });
+
+    expect(fact.evidenceStatus).toBe("user_stated");
+    expect(fact.sensitivity).toBe("private");
   });
 });

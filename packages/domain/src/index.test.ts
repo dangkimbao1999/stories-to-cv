@@ -6,9 +6,12 @@ import {
   generateSessionOpener,
   generateTemplateCvVersion,
   getActiveDomainPacks,
+  getActiveIndustryContextPacks,
+  getRoleContextPackById,
   markSessionKnowledgeBaseSelection,
   requiresOnboarding,
   summarizeSessionForKnowledgeBase,
+  toCareerFactFromUserClaim,
 } from "./index";
 
 describe("onboarding model", () => {
@@ -157,5 +160,73 @@ describe("domain content registry", () => {
         }),
       ]),
     );
+  });
+
+  it("exposes industry context packs with workflows, metrics, questions, and guardrails", () => {
+    const industries = getActiveIndustryContextPacks();
+
+    expect(industries).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "fintech",
+          coreWorkflows: expect.arrayContaining([
+            expect.objectContaining({
+              id: "user-onboarding",
+              commonMetrics: expect.arrayContaining(["conversion rate", "KYC pass rate", "time to activation"]),
+            }),
+          ]),
+          discoveryQuestions: expect.arrayContaining([
+            expect.stringContaining("conversion, approval rate, fraud, or compliance"),
+          ]),
+          guardrails: expect.arrayContaining([expect.stringContaining("Do not invent metrics")]),
+        }),
+      ]),
+    );
+  });
+
+  it("exposes role context packs that describe seniority, responsibilities, and impact dimensions", () => {
+    const productManager = getRoleContextPackById("product-manager");
+
+    expect(productManager).toEqual(
+      expect.objectContaining({
+        id: "product-manager",
+        seniorityLevels: expect.arrayContaining([
+          expect.objectContaining({
+            id: "senior",
+            expectedScope: expect.arrayContaining(["strategy", "cross-functional leadership", "roadmap ownership"]),
+          }),
+        ]),
+        impactDimensions: expect.arrayContaining(["revenue", "activation", "retention", "risk reduction"]),
+        storyPrompts: expect.arrayContaining([expect.stringContaining("trade off")]),
+      }),
+    );
+  });
+
+  it("converts a user-stated claim into a provenance-preserving career fact", () => {
+    const fact = toCareerFactFromUserClaim({
+      id: "fact-1",
+      userId: "user-1",
+      claim: "Reduced onboarding drop-off from 42% to 28%.",
+      industryId: "fintech",
+      roleId: "product-manager",
+      workflowId: "user-onboarding",
+      now: "2026-06-16T09:00:00.000Z",
+    });
+
+    expect(fact).toEqual({
+      id: "fact-1",
+      userId: "user-1",
+      type: "achievement",
+      userClaim: "Reduced onboarding drop-off from 42% to 28%.",
+      context: {
+        industryId: "fintech",
+        roleId: "product-manager",
+        workflowId: "user-onboarding",
+      },
+      evidenceStatus: "user_stated",
+      sensitivity: "private",
+      cvRelevance: ["industry_context", "role_context", "workflow_context"],
+      createdAt: "2026-06-16T09:00:00.000Z",
+    });
   });
 });

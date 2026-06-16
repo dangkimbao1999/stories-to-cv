@@ -232,6 +232,209 @@ export function getActiveDomainPacks(): DomainPack[] {
     }));
 }
 
+export interface IndustryWorkflowContext {
+  id: EntityId;
+  label: string;
+  typicalSteps: string[];
+  commonMetrics: string[];
+}
+
+export interface IndustryMetricContext {
+  id: EntityId;
+  label: string;
+  category: "business" | "product" | "risk" | "operations" | "people";
+}
+
+export interface IndustryContextPack {
+  id: EntityId;
+  label: string;
+  version: number;
+  active: boolean;
+  summary: string;
+  businessModels: string[];
+  coreWorkflows: IndustryWorkflowContext[];
+  keyMetrics: IndustryMetricContext[];
+  stakeholders: string[];
+  commonTools: string[];
+  regulatoryConcerns: string[];
+  achievementPatterns: string[];
+  discoveryQuestions: string[];
+  guardrails: string[];
+}
+
+export interface RoleSeniorityContext {
+  id: EntityId;
+  label: string;
+  expectedScope: string[];
+}
+
+export interface RoleContextPack {
+  id: EntityId;
+  label: string;
+  version: number;
+  active: boolean;
+  seniorityLevels: RoleSeniorityContext[];
+  coreResponsibilities: string[];
+  impactDimensions: string[];
+  storyPrompts: string[];
+}
+
+export type CareerFactType = "achievement" | "responsibility" | "skill" | "context";
+export type CareerFactEvidenceStatus = "user_stated" | "source_supported" | "needs_confirmation";
+export type CareerFactSensitivity = "private" | "shareable";
+
+export interface CareerFact {
+  id: EntityId;
+  userId: EntityId;
+  type: CareerFactType;
+  userClaim: string;
+  context: {
+    industryId: EntityId;
+    roleId: EntityId;
+    workflowId?: EntityId;
+  };
+  evidenceStatus: CareerFactEvidenceStatus;
+  sensitivity: CareerFactSensitivity;
+  cvRelevance: string[];
+  createdAt: Timestamp;
+}
+
+export interface ToCareerFactFromUserClaimInput {
+  id: EntityId;
+  userId: EntityId;
+  claim: string;
+  industryId: EntityId;
+  roleId: EntityId;
+  workflowId?: EntityId;
+  now: Timestamp;
+}
+
+export const industryContextPacks: IndustryContextPack[] = [
+  {
+    id: "fintech",
+    label: "Fintech",
+    version: 1,
+    active: true,
+    summary: "Financial products delivered through software, data, and regulated operational workflows.",
+    businessModels: ["Payments", "Lending", "Wealth management", "B2B financial infrastructure"],
+    coreWorkflows: [
+      {
+        id: "user-onboarding",
+        label: "User onboarding",
+        typicalSteps: ["KYC", "Risk scoring", "Account activation"],
+        commonMetrics: ["conversion rate", "KYC pass rate", "time to activation"],
+      },
+      {
+        id: "transaction-monitoring",
+        label: "Transaction monitoring",
+        typicalSteps: ["Transaction event capture", "Rule or model scoring", "Review and escalation"],
+        commonMetrics: ["fraud rate", "false positive rate", "chargeback rate"],
+      },
+    ],
+    keyMetrics: [
+      { id: "revenue", label: "Revenue", category: "business" },
+      { id: "transaction-volume", label: "Transaction volume", category: "business" },
+      { id: "activation", label: "Activation", category: "product" },
+      { id: "retention", label: "Retention", category: "product" },
+      { id: "fraud-rate", label: "Fraud rate", category: "risk" },
+      { id: "compliance-incidents", label: "Compliance incidents", category: "risk" },
+    ],
+    stakeholders: ["customers", "risk team", "compliance", "engineering", "operations", "banking partners"],
+    commonTools: ["KYC providers", "payment gateways", "risk engines", "analytics dashboards"],
+    regulatoryConcerns: ["data privacy", "KYC/AML", "auditability", "consumer protection"],
+    achievementPatterns: [
+      "Reduced onboarding drop-off by X%",
+      "Improved fraud detection while preserving approval rate",
+      "Launched a compliant payment flow across markets",
+    ],
+    discoveryQuestions: [
+      "Did you influence conversion, approval rate, fraud, or compliance?",
+      "Which risk, compliance, operations, or banking stakeholders were involved?",
+      "What before-and-after metric proves the workflow improved?",
+    ],
+    guardrails: [
+      "Do not invent metrics, employers, tools, regulations, or regulated responsibilities.",
+      "Use fintech context only to ask better questions and propose user-confirmed framings.",
+    ],
+  },
+];
+
+export const roleContextPacks: RoleContextPack[] = [
+  {
+    id: "product-manager",
+    label: "Product Manager",
+    version: 1,
+    active: true,
+    seniorityLevels: [
+      {
+        id: "junior",
+        label: "Junior",
+        expectedScope: ["feature delivery", "user research support", "metrics tracking"],
+      },
+      {
+        id: "senior",
+        label: "Senior",
+        expectedScope: ["strategy", "cross-functional leadership", "roadmap ownership"],
+      },
+      {
+        id: "lead",
+        label: "Lead",
+        expectedScope: ["portfolio direction", "business outcomes", "team process leadership"],
+      },
+    ],
+    coreResponsibilities: [
+      "problem discovery",
+      "prioritization",
+      "roadmap planning",
+      "stakeholder alignment",
+      "delivery coordination",
+      "metric ownership",
+    ],
+    impactDimensions: ["revenue", "activation", "retention", "efficiency", "risk reduction", "customer satisfaction"],
+    storyPrompts: [
+      "Have you had to trade off user experience against business or risk constraints?",
+      "Have you changed a roadmap based on insight or data?",
+      "Which metric did you use to decide whether the feature worked?",
+    ],
+  },
+];
+
+export function getActiveIndustryContextPacks(): IndustryContextPack[] {
+  return industryContextPacks.filter((pack) => pack.active);
+}
+
+export function getIndustryContextPackById(id: EntityId): IndustryContextPack | undefined {
+  return getActiveIndustryContextPacks().find((pack) => pack.id === id);
+}
+
+export function getActiveRoleContextPacks(): RoleContextPack[] {
+  return roleContextPacks.filter((pack) => pack.active);
+}
+
+export function getRoleContextPackById(id: EntityId): RoleContextPack | undefined {
+  return getActiveRoleContextPacks().find((pack) => pack.id === id);
+}
+
+export function toCareerFactFromUserClaim(input: ToCareerFactFromUserClaimInput): CareerFact {
+  const context: CareerFact["context"] = {
+    industryId: input.industryId,
+    roleId: input.roleId,
+    ...(input.workflowId ? { workflowId: input.workflowId } : {}),
+  };
+
+  return {
+    id: input.id,
+    userId: input.userId,
+    type: "achievement",
+    userClaim: input.claim.trim(),
+    context,
+    evidenceStatus: "user_stated",
+    sensitivity: "private",
+    cvRelevance: ["industry_context", "role_context", ...(input.workflowId ? ["workflow_context"] : [])],
+    createdAt: input.now,
+  };
+}
+
 export interface GenerateSessionOpenerInput {
   domainId: EntityId;
   skillIds: EntityId[];
