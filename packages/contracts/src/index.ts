@@ -149,3 +149,36 @@ export const careerFactSchema = z.object({
 });
 
 export type CareerFactInput = z.infer<typeof careerFactSchema>;
+
+export const conversationStorySlotSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  required: z.boolean(),
+  question: z.string().min(1),
+  captureTargets: nonEmptyStringArraySchema,
+  followUpHints: nonEmptyStringArraySchema,
+});
+
+export const conversationFollowUpTriggerSchema = z.object({
+  id: entityIdSchema,
+  targetSlotId: entityIdSchema,
+  priority: z.number().int().nonnegative(),
+  whenUserMentions: nonEmptyStringArraySchema,
+  question: z.string().min(1),
+  reason: z.string().min(1),
+});
+
+export const conversationFollowUpPlaybookSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  version: z.number().int().positive(),
+  active: z.boolean(),
+  goal: z.string().min(1),
+  principles: nonEmptyStringArraySchema,
+  storySlots: z.array(conversationStorySlotSchema).min(1),
+  triggers: z.array(conversationFollowUpTriggerSchema).min(1),
+  completionCriteria: nonEmptyStringArraySchema,
+  guardrails: nonEmptyStringArraySchema,
+});
+
+export type ConversationFollowUpPlaybookInput = z.infer<typeof conversationFollowUpPlaybookSchema>;

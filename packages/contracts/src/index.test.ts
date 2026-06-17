@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   careerFactSchema,
+  conversationFollowUpPlaybookSchema,
   createChatSessionSchema,
   cvGenerationRequestSchema,
   industryContextPackSchema,
@@ -204,5 +205,68 @@ describe("careerFactSchema", () => {
 
     expect(fact.evidenceStatus).toBe("user_stated");
     expect(fact.sensitivity).toBe("private");
+  });
+});
+
+describe("conversationFollowUpPlaybookSchema", () => {
+  it("requires slots, triggers, and safety rules for multi-turn career story excavation", () => {
+    const playbook = conversationFollowUpPlaybookSchema.parse({
+      id: "career-story-excavation",
+      label: "Career story excavation",
+      version: 1,
+      active: true,
+      goal: "Turn vague work memories into private, provenance-aware career stories.",
+      principles: ["Ask one thing at a time.", "Do not turn team outcomes into personal facts without confirmation."],
+      storySlots: [
+        {
+          id: "personal-contribution",
+          label: "Personal contribution",
+          required: true,
+          question: "Which part did you personally own?",
+          captureTargets: ["owned scope", "implementation detail"],
+          followUpHints: ["Separate team outcome from user contribution."],
+        },
+        {
+          id: "impact-metric",
+          label: "Impact metric",
+          required: true,
+          question: "What before-and-after metric changed?",
+          captureTargets: ["metric", "before state", "after state"],
+          followUpHints: ["Ask for proxy evidence if exact numbers are unavailable."],
+        },
+      ],
+      triggers: [
+        {
+          id: "team-outcome-claim",
+          targetSlotId: "personal-contribution",
+          priority: 100,
+          whenUserMentions: ["we built", "my team"],
+          question: "What part did you personally handle?",
+          reason: "Separate personal contribution from team outcome.",
+        },
+      ],
+      completionCriteria: ["Required slots have user-stated answers."],
+      guardrails: ["Ask for confirmation before storing a career fact."],
+    });
+
+    expect(playbook.storySlots).toHaveLength(2);
+    expect(playbook.triggers[0]?.targetSlotId).toBe("personal-contribution");
+  });
+
+  it("rejects playbooks with no story slots or no guardrails", () => {
+    expect(() =>
+      conversationFollowUpPlaybookSchema.parse({
+        id: "unsafe",
+        label: "Unsafe",
+        version: 1,
+        active: true,
+        goal: "Ask anything.",
+        principles: ["Ask questions."],
+        storySlots: [],
+        triggers: [],
+        completionCriteria: [],
+        guardrails: [],
+      }),
+    ).toThrow();
   });
 });

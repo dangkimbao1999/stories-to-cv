@@ -189,6 +189,99 @@ export function buildIndustryAwareConversationBrief(
   };
 }
 
+export interface CareerStoryFollowUpSlot {
+  id: string;
+  label: string;
+  required: boolean;
+  question: string;
+  captureTargets: string[];
+  followUpHints: string[];
+}
+
+export interface CareerStoryFollowUpTrigger {
+  id: string;
+  targetSlotId: string;
+  priority: number;
+  whenUserMentions: string[];
+  question: string;
+  reason: string;
+}
+
+export interface CareerStoryFollowUpPlaybook {
+  id: string;
+  label: string;
+  goal: string;
+  principles: string[];
+  storySlots: CareerStoryFollowUpSlot[];
+  triggers: CareerStoryFollowUpTrigger[];
+  completionCriteria: string[];
+  guardrails: string[];
+}
+
+export interface BuildNextCareerStoryFollowUpInput {
+  latestUserMessage: string;
+  answeredSlotIds: string[];
+  playbook: CareerStoryFollowUpPlaybook;
+}
+
+export interface CareerStoryFollowUp {
+  question: string;
+  slotId: string | null;
+  triggerId?: string;
+  reason: string;
+  captureTargets: string[];
+  safetyReminders: string[];
+  isComplete: boolean;
+}
+
+export function buildNextCareerStoryFollowUp(input: BuildNextCareerStoryFollowUpInput): CareerStoryFollowUp {
+  const answered = new Set(input.answeredSlotIds);
+  const triggered = input.playbook.triggers
+    .filter((trigger) => !answered.has(trigger.targetSlotId))
+    .filter((trigger) => triggerMatches(input.latestUserMessage, trigger))
+    .sort((left, right) => right.priority - left.priority)[0];
+
+  if (triggered) {
+    const slot = findSlot(input.playbook, triggered.targetSlotId);
+
+    return {
+      question: triggered.question,
+      slotId: triggered.targetSlotId,
+      triggerId: triggered.id,
+      reason: triggered.reason,
+      captureTargets: slot?.captureTargets ?? [],
+      safetyReminders: input.playbook.guardrails,
+      isComplete: false,
+    };
+  }
+
+  const nextRequiredSlot = input.playbook.storySlots.find((slot) => slot.required && !answered.has(slot.id));
+  const nextOptionalSlot = input.playbook.storySlots.find((slot) => !slot.required && !answered.has(slot.id));
+  const nextSlot = nextRequiredSlot ?? nextOptionalSlot;
+
+  if (!nextSlot) {
+    return {
+      question: "This story has enough structure to summarize. Ask the user to confirm the framing before saving it.",
+      slotId: null,
+      reason: "All configured story slots are answered.",
+      captureTargets: [],
+      safetyReminders: input.playbook.guardrails,
+      isComplete: true,
+    };
+  }
+
+  return {
+    question: nextSlot.question,
+    slotId: nextSlot.id,
+    reason: nextSlot.required
+      ? "This required story slot is still missing."
+      : "This optional slot can deepen the story.",
+    captureTargets: nextSlot.captureTargets,
+    safetyReminders: input.playbook.guardrails,
+    isComplete: false,
+  };
+}
+
 function resolveProvider(env: LlmProviderEnv): LlmProviderId {
   const requestedProvider = env.LLM_PROVIDER?.trim();
 
@@ -228,4 +321,18 @@ function readFirst(env: LlmProviderEnv, ...keys: string[]): string | undefined {
 
 function uniqueStrings(values: string[]): string[] {
   return [...new Set(values.filter((value) => value.trim().length > 0))];
+}
+
+function triggerMatches(message: string, trigger: CareerStoryFollowUpTrigger): boolean {
+  const normalizedMessage = normalizeForMatching(message);
+
+  return trigger.whenUserMentions.some((signal) => normalizedMessage.includes(normalizeForMatching(signal)));
+}
+
+function normalizeForMatching(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function findSlot(playbook: CareerStoryFollowUpPlaybook, slotId: string): CareerStoryFollowUpSlot | undefined {
+  return playbook.storySlots.find((slot) => slot.id === slotId);
 }

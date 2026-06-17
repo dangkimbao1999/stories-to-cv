@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildIndustryAwareConversationBrief,
+  buildNextCareerStoryFollowUp,
   createLlmLanguageModel,
   createLlmProviderConfig,
   industryAwareCareerAssistantPolicy,
@@ -183,5 +184,119 @@ describe("industry-aware conversation framework", () => {
     expect(industryAwareCareerAssistantPolicy).toContain("source of truth");
     expect(industryAwareCareerAssistantPolicy).toContain("Never invent achievements");
     expect(industryAwareCareerAssistantPolicy).toContain("hypothesis");
+  });
+});
+
+describe("career story follow-up engine", () => {
+  const playbook = {
+    id: "career-story-excavation",
+    label: "Career story excavation",
+    goal: "Turn vague work memories into private, provenance-aware career stories.",
+    principles: [
+      "Ask one thing at a time.",
+      "Probe personal contribution before turning team outcomes into user facts.",
+    ],
+    storySlots: [
+      {
+        id: "scope",
+        label: "Scope",
+        required: true,
+        question: "What product, workflow, or system did this work affect?",
+        captureTargets: ["project scope"],
+        followUpHints: ["Find the story boundary."],
+      },
+      {
+        id: "personal-contribution",
+        label: "Personal contribution",
+        required: true,
+        question: "Which part did you personally own or directly deliver?",
+        captureTargets: ["owned responsibility", "implementation detail"],
+        followUpHints: ["Separate team outcome from individual contribution."],
+      },
+      {
+        id: "impact-metric",
+        label: "Impact metric",
+        required: true,
+        question: "What changed before and after this work?",
+        captureTargets: ["metric", "before state", "after state"],
+        followUpHints: ["Ask for proxy evidence when exact numbers are missing."],
+      },
+      {
+        id: "evidence",
+        label: "Evidence",
+        required: false,
+        question: "What evidence could support this story?",
+        captureTargets: ["source", "artifact", "feedback"],
+        followUpHints: ["Keep evidence private unless the user chooses to share it."],
+      },
+    ],
+    triggers: [
+      {
+        id: "team-outcome-claim",
+        targetSlotId: "personal-contribution",
+        priority: 100,
+        whenUserMentions: ["we built", "our team", "my team"],
+        question: "What part did you personally own or directly deliver?",
+        reason: "Separate the user's contribution from a team outcome before storing facts.",
+      },
+      {
+        id: "vague-impact",
+        targetSlotId: "impact-metric",
+        priority: 80,
+        whenUserMentions: ["optimized", "improved", "helped", "faster"],
+        question: "What before-and-after metric or observable change proves the improvement?",
+        reason: "The user described impact without concrete evidence yet.",
+      },
+    ],
+    completionCriteria: ["Required story slots have user-stated answers."],
+    guardrails: ["Do not invent metrics, ownership, or evidence."],
+  };
+
+  it("prioritizes personal contribution when the user describes a team outcome", () => {
+    const followUp = buildNextCareerStoryFollowUp({
+      latestUserMessage: "Our team built a new backend service and improved checkout.",
+      answeredSlotIds: ["scope"],
+      playbook,
+    });
+
+    expect(followUp).toEqual({
+      question: "What part did you personally own or directly deliver?",
+      slotId: "personal-contribution",
+      triggerId: "team-outcome-claim",
+      reason: "Separate the user's contribution from a team outcome before storing facts.",
+      captureTargets: ["owned responsibility", "implementation detail"],
+      safetyReminders: ["Do not invent metrics, ownership, or evidence."],
+      isComplete: false,
+    });
+  });
+
+  it("asks for evidence of impact when the user gives vague improvement language", () => {
+    const followUp = buildNextCareerStoryFollowUp({
+      latestUserMessage: "I optimized the API and made it faster for customers.",
+      answeredSlotIds: ["scope", "personal-contribution"],
+      playbook,
+    });
+
+    expect(followUp.slotId).toBe("impact-metric");
+    expect(followUp.question).toContain("before-and-after metric");
+    expect(followUp.triggerId).toBe("vague-impact");
+  });
+
+  it("falls back to the next unanswered required slot and then optional evidence", () => {
+    expect(
+      buildNextCareerStoryFollowUp({
+        latestUserMessage: "I worked on the checkout system.",
+        answeredSlotIds: [],
+        playbook,
+      }).slotId,
+    ).toBe("scope");
+
+    expect(
+      buildNextCareerStoryFollowUp({
+        latestUserMessage: "We have the main story now.",
+        answeredSlotIds: ["scope", "personal-contribution", "impact-metric"],
+        playbook,
+      }).slotId,
+    ).toBe("evidence");
   });
 });

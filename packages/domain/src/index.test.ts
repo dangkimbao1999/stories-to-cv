@@ -5,8 +5,10 @@ import {
   defaultOnboardingForm,
   generateSessionOpener,
   generateTemplateCvVersion,
+  getActiveConversationFollowUpPlaybooks,
   getActiveDomainPacks,
   getActiveIndustryContextPacks,
+  getConversationFollowUpPlaybookById,
   getRoleContextPackById,
   markSessionKnowledgeBaseSelection,
   requiresOnboarding,
@@ -25,6 +27,57 @@ describe("onboarding model", () => {
   it("requires onboarding until a profile records completion", () => {
     expect(requiresOnboarding({ onboardingCompletedAt: null })).toBe(true);
     expect(requiresOnboarding({ onboardingCompletedAt: "2026-06-11T08:00:00.000Z" })).toBe(false);
+  });
+});
+
+describe("conversation follow-up playbooks", () => {
+  it("defines a default career story playbook that turns vague memories into richer story slots", () => {
+    const playbook = getConversationFollowUpPlaybookById("career-story-excavation");
+
+    expect(playbook).toEqual(
+      expect.objectContaining({
+        id: "career-story-excavation",
+        goal: expect.stringContaining("private, provenance-aware career stories"),
+        principles: expect.arrayContaining([
+          "Ask one thing at a time.",
+          "Probe personal contribution before turning team outcomes into user facts.",
+        ]),
+        storySlots: expect.arrayContaining([
+          expect.objectContaining({
+            id: "personal-contribution",
+            required: true,
+            question: expect.stringContaining("personally own"),
+          }),
+          expect.objectContaining({
+            id: "impact-metric",
+            required: true,
+            question: expect.stringContaining("before-and-after"),
+          }),
+          expect.objectContaining({
+            id: "evidence",
+            required: false,
+            question: expect.stringContaining("evidence"),
+          }),
+        ]),
+        triggers: expect.arrayContaining([
+          expect.objectContaining({
+            id: "team-outcome-claim",
+            targetSlotId: "personal-contribution",
+            priority: 100,
+          }),
+          expect.objectContaining({
+            id: "vague-impact",
+            targetSlotId: "impact-metric",
+          }),
+        ]),
+      }),
+    );
+  });
+
+  it("only exposes active follow-up playbooks", () => {
+    expect(getActiveConversationFollowUpPlaybooks()).toEqual([
+      expect.objectContaining({ id: "career-story-excavation" }),
+    ]);
   });
 });
 
