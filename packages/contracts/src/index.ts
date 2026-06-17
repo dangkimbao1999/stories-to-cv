@@ -112,7 +112,7 @@ export const conversationFollowUpTriggerSchema = z.object({
   reason: z.string().min(1),
 });
 
-export const conversationFollowUpPlaybookSchema = z.object({
+export const conversationFollowUpSchema = z.object({
   id: entityIdSchema,
   label: z.string().min(1),
   version: z.number().int().positive(),
@@ -125,7 +125,7 @@ export const conversationFollowUpPlaybookSchema = z.object({
   guardrails: nonEmptyStringArraySchema,
 });
 
-export type ConversationFollowUpPlaybookInput = z.infer<typeof conversationFollowUpPlaybookSchema>;
+export type ConversationFollowUpInput = z.infer<typeof conversationFollowUpSchema>;
 
 export const industryContextPackSchema = z.object({
   id: entityIdSchema,
@@ -142,7 +142,7 @@ export const industryContextPackSchema = z.object({
   achievementPatterns: nonEmptyStringArraySchema,
   discoveryQuestions: nonEmptyStringArraySchema,
   guardrails: nonEmptyStringArraySchema,
-  conversationFollowUp: conversationFollowUpPlaybookSchema,
+  conversationFollowUp: conversationFollowUpSchema,
 });
 
 export type IndustryContextPackInput = z.infer<typeof industryContextPackSchema>;

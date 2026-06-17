@@ -189,9 +189,9 @@ describe("industry-aware conversation framework", () => {
 });
 
 describe("career story follow-up engine", () => {
-  const playbook = {
-    id: "career-story-excavation",
-    label: "Career story excavation",
+  const conversationFollowUp = {
+    id: "software-engineer-conversation-follow-up",
+    label: "Software engineer conversation follow-up",
     goal: "Turn vague work memories into private, provenance-aware career stories.",
     principles: [
       "Ask one thing at a time.",
@@ -257,7 +257,7 @@ describe("career story follow-up engine", () => {
     const followUp = buildNextCareerStoryFollowUp({
       latestUserMessage: "Our team built a new backend service and improved checkout.",
       answeredSlotIds: ["scope"],
-      playbook,
+      conversationFollowUp,
     });
 
     expect(followUp).toEqual({
@@ -275,7 +275,7 @@ describe("career story follow-up engine", () => {
     const followUp = buildNextCareerStoryFollowUp({
       latestUserMessage: "I optimized the API and made it faster for customers.",
       answeredSlotIds: ["scope", "personal-contribution"],
-      playbook,
+      conversationFollowUp,
     });
 
     expect(followUp.slotId).toBe("impact-metric");
@@ -288,7 +288,7 @@ describe("career story follow-up engine", () => {
       buildNextCareerStoryFollowUp({
         latestUserMessage: "I worked on the checkout system.",
         answeredSlotIds: [],
-        playbook,
+        conversationFollowUp,
       }).slotId,
     ).toBe("scope");
 
@@ -296,12 +296,12 @@ describe("career story follow-up engine", () => {
       buildNextCareerStoryFollowUp({
         latestUserMessage: "We have the main story now.",
         answeredSlotIds: ["scope", "personal-contribution", "impact-metric"],
-        playbook,
+        conversationFollowUp,
       }).slotId,
     ).toBe("evidence");
   });
 
-  it("can use a follow-up playbook embedded directly in the industry context", () => {
+  it("uses the follow-up definition embedded directly in the industry context", () => {
     const followUp = buildNextIndustryCareerStoryFollowUp({
       latestUserMessage: "I worked with compliance to reduce onboarding risk.",
       answeredSlotIds: ["scope"],
@@ -309,7 +309,7 @@ describe("career story follow-up engine", () => {
         id: "fintech",
         label: "Fintech",
         conversationFollowUp: {
-          ...playbook,
+          ...conversationFollowUp,
           triggers: [
             {
               id: "compliance-or-risk-claim",
@@ -319,7 +319,7 @@ describe("career story follow-up engine", () => {
               question: "What regulated workflow, risk decision, or compliance constraint shaped your work?",
               reason: "Fintech stories need careful context before claiming regulated responsibility.",
             },
-            ...playbook.triggers,
+            ...conversationFollowUp.triggers,
           ],
         },
       },

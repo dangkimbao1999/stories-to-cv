@@ -207,7 +207,7 @@ export interface CareerStoryFollowUpTrigger {
   reason: string;
 }
 
-export interface CareerStoryFollowUpPlaybook {
+export interface ConversationFollowUpDefinition {
   id: string;
   label: string;
   goal: string;
@@ -221,13 +221,13 @@ export interface CareerStoryFollowUpPlaybook {
 export interface BuildNextCareerStoryFollowUpInput {
   latestUserMessage: string;
   answeredSlotIds: string[];
-  playbook: CareerStoryFollowUpPlaybook;
+  conversationFollowUp: ConversationFollowUpDefinition;
 }
 
 export interface IndustryWithConversationFollowUp {
   id: string;
   label: string;
-  conversationFollowUp: CareerStoryFollowUpPlaybook;
+  conversationFollowUp: ConversationFollowUpDefinition;
 }
 
 export interface BuildNextIndustryCareerStoryFollowUpInput {
@@ -252,19 +252,20 @@ export function buildNextIndustryCareerStoryFollowUp(
   return buildNextCareerStoryFollowUp({
     latestUserMessage: input.latestUserMessage,
     answeredSlotIds: input.answeredSlotIds,
-    playbook: input.industry.conversationFollowUp,
+    conversationFollowUp: input.industry.conversationFollowUp,
   });
 }
 
 export function buildNextCareerStoryFollowUp(input: BuildNextCareerStoryFollowUpInput): CareerStoryFollowUp {
   const answered = new Set(input.answeredSlotIds);
-  const triggered = input.playbook.triggers
+  const conversationFollowUp = input.conversationFollowUp;
+  const triggered = conversationFollowUp.triggers
     .filter((trigger) => !answered.has(trigger.targetSlotId))
     .filter((trigger) => triggerMatches(input.latestUserMessage, trigger))
     .sort((left, right) => right.priority - left.priority)[0];
 
   if (triggered) {
-    const slot = findSlot(input.playbook, triggered.targetSlotId);
+    const slot = findSlot(conversationFollowUp, triggered.targetSlotId);
 
     return {
       question: triggered.question,
@@ -272,13 +273,13 @@ export function buildNextCareerStoryFollowUp(input: BuildNextCareerStoryFollowUp
       triggerId: triggered.id,
       reason: triggered.reason,
       captureTargets: slot?.captureTargets ?? [],
-      safetyReminders: input.playbook.guardrails,
+      safetyReminders: conversationFollowUp.guardrails,
       isComplete: false,
     };
   }
 
-  const nextRequiredSlot = input.playbook.storySlots.find((slot) => slot.required && !answered.has(slot.id));
-  const nextOptionalSlot = input.playbook.storySlots.find((slot) => !slot.required && !answered.has(slot.id));
+  const nextRequiredSlot = conversationFollowUp.storySlots.find((slot) => slot.required && !answered.has(slot.id));
+  const nextOptionalSlot = conversationFollowUp.storySlots.find((slot) => !slot.required && !answered.has(slot.id));
   const nextSlot = nextRequiredSlot ?? nextOptionalSlot;
 
   if (!nextSlot) {
@@ -287,7 +288,7 @@ export function buildNextCareerStoryFollowUp(input: BuildNextCareerStoryFollowUp
       slotId: null,
       reason: "All configured story slots are answered.",
       captureTargets: [],
-      safetyReminders: input.playbook.guardrails,
+      safetyReminders: conversationFollowUp.guardrails,
       isComplete: true,
     };
   }
@@ -299,7 +300,7 @@ export function buildNextCareerStoryFollowUp(input: BuildNextCareerStoryFollowUp
       ? "This required story slot is still missing."
       : "This optional slot can deepen the story.",
     captureTargets: nextSlot.captureTargets,
-    safetyReminders: input.playbook.guardrails,
+    safetyReminders: conversationFollowUp.guardrails,
     isComplete: false,
   };
 }
@@ -355,6 +356,9 @@ function normalizeForMatching(value: string): string {
   return value.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
-function findSlot(playbook: CareerStoryFollowUpPlaybook, slotId: string): CareerStoryFollowUpSlot | undefined {
-  return playbook.storySlots.find((slot) => slot.id === slotId);
+function findSlot(
+  conversationFollowUp: ConversationFollowUpDefinition,
+  slotId: string,
+): CareerStoryFollowUpSlot | undefined {
+  return conversationFollowUp.storySlots.find((slot) => slot.id === slotId);
 }

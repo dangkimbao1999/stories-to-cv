@@ -1,183 +1,161 @@
 # Hướng Dẫn Tạo Industry Context
 
-Industry context là bản đồ vận hành của một ngành để chatbot biết hỏi đúng, hiểu thuật ngữ đúng, và gợi ý góc khai thác kinh nghiệm cho người dùng xác nhận. Nó không phải nơi để AI tự tạo thành tựu thay người dùng.
+Industry context là một file kiến thức giúp chatbot hiểu cách một ngành vận hành để hỏi tiếp tốt hơn trong cuộc trò chuyện nghề nghiệp. File này vừa mô tả ngành, vừa định nghĩa `conversationFollowUp` cho ngành đó. Không tạo follow-up riêng ở nơi khác, vì cách khai thác câu chuyện của software engineer, banker, sales, nurse, hay designer đều khác nhau.
+
+Mục tiêu quan trọng nhất: giúp người dùng kể nhiều hơn, cụ thể hơn, và trung thực hơn. Chatbot phải biết đang thiếu mảnh nào của câu chuyện, nên hỏi câu tiếp theo ra sao, và khi nào phải dừng lại để xác nhận thay vì suy diễn.
 
 ## Nguyên Tắc
 
 - Knowledge base cá nhân của người dùng là nguồn sự thật.
-- Industry context chỉ được dùng để hỏi tốt hơn, diễn giải thuật ngữ, và đề xuất framing dạng giả thuyết.
-- Không tự bịa employer, metric, tool, regulation, responsibility, scope, hay achievement.
-- Mọi claim dùng cho CV phải đi qua lời kể của người dùng hoặc source người dùng cung cấp.
-- Guardrail là bắt buộc. Một pack không có câu hỏi khai thác và điều AI không được suy diễn thì chưa đủ an toàn để dùng.
-- Ưu tiên ngôn ngữ thực tế của ngành hơn mô tả encyclopedia.
+- Industry context chỉ dùng để hỏi tốt hơn, hiểu thuật ngữ, và đề xuất framing dưới dạng giả thuyết cần xác nhận.
+- Không tự bịa employer, metric, tool, regulation, trách nhiệm, scope, seniority, hoặc achievement.
+- Mỗi câu hỏi follow-up chỉ nên khai thác một mảnh còn thiếu.
+- Luôn tách `team outcome` khỏi `personal contribution` trước khi lưu career fact.
+- Follow-up phải tùy theo ngành. Một ngành có workflow, risk, stakeholder, metric, và bằng chứng riêng thì phải có slot và trigger riêng.
+- Guardrail là bắt buộc. Nếu file khiến AI dễ ép người dùng nhận vơ thành tựu thì file chưa đạt.
 
-## Khi Nào Cần Tạo Pack Mới
+## Khi Nào Cần Tạo Industry Context
 
-Tạo industry context pack khi:
+Tạo file mới khi nhóm người dùng mục tiêu có workflow, metric, stakeholder, risk, hoặc cách chứng minh thành tựu riêng. Ví dụ: fintech cần hỏi về KYC, fraud, auditability; software engineering cần hỏi về system boundary, production reliability, code ownership, latency, test coverage; healthcare cần hỏi về patient safety và clinical workflow.
 
-- Có nhóm người dùng mục tiêu thuộc một ngành có workflow, metric, stakeholder, hoặc risk riêng.
-- Chatbot cần hỏi sâu hơn so với role context chung.
-- JD thường nhắc đến thuật ngữ ngành mà người dùng có thể không biết cách chuyển thành career story.
+Không tạo file mới nếu khác biệt chỉ là tên công ty, tên sản phẩm, hoặc một bộ kỹ năng nhỏ có thể nằm trong role context.
 
-Không tạo pack mới nếu khác biệt chỉ là tên công ty, tên sản phẩm, hoặc một nhóm kỹ năng có thể nằm trong role context.
+## Cấu Trúc File
 
-## Quy Trình Tạo Pack
+Một industry context hoàn chỉnh gồm hai phần trong cùng một YAML:
+
+- `industry context`: ngành tạo giá trị thế nào, workflow nào quan trọng, metric nào thường dùng, stakeholder nào liên quan, rủi ro nào cần tránh suy diễn.
+- `conversationFollowUp`: chatbot nên hỏi tiếp thế nào để người dùng kể rõ scope, đóng góp cá nhân, bối cảnh ngành, impact, stakeholder, evidence, và reflection.
+
+Không dùng file follow-up riêng. Nếu một ngành cần follow-up khác, sửa hoặc tạo industry context khác.
+
+## Quy Trình Soạn
 
 1. Xác định ranh giới ngành.
-   Viết một đoạn summary ngắn trả lời: ngành này tạo giá trị gì, vận hành qua workflow nào, và có constraint gì đặc thù.
+   Viết `summary` trả lời: ngành này tạo giá trị gì, vận hành qua workflow nào, và có constraint gì đặc thù.
 
 2. Liệt kê business model.
-   Chỉ chọn các model giúp chatbot hiểu động lực kinh doanh, ví dụ payments, lending, marketplace, subscription, managed services.
+   Chọn các model giúp AI hiểu động lực kinh doanh, ví dụ subscription, marketplace, payments, managed services, infrastructure, consulting.
 
 3. Liệt kê core workflow.
-   Mỗi workflow nên là một chuỗi công việc mà nhiều role có thể tham gia. Ví dụ fintech có `user-onboarding`, healthcare có `patient-intake`, logistics có `order-fulfillment`.
+   Mỗi workflow nên là chuỗi công việc mà nhiều role có thể tham gia. Với software engineer, workflow có thể là feature delivery, backend service development, reliability, quality automation, technical debt modernization.
 
 4. Gắn metric vào workflow.
-   Metric nên là thứ người dùng có thể từng ảnh hưởng hoặc quan sát. Tránh metric quá xa công việc cá nhân nếu chatbot dễ khiến người dùng nhận vơ ownership.
+   Metric nên là thứ người dùng có thể từng ảnh hưởng hoặc quan sát. Tránh metric quá xa công việc cá nhân nếu dễ làm AI suy diễn ownership.
 
 5. Liệt kê stakeholder.
-   Bao gồm team nội bộ, người dùng cuối, partner, regulator, vendor, hoặc nhóm vận hành liên quan.
+   Bao gồm end users, customers, internal teams, product, design, QA, security, operations, leadership, vendors, regulators nếu có.
 
-6. Liệt kê tool/system phổ biến.
-   Chỉ ghi tool category hoặc system class nếu brand cụ thể không ổn định. Ví dụ `KYC providers` tốt hơn đoán tên vendor khi chưa có nguồn.
+6. Liệt kê tool hoặc system class.
+   Ưu tiên category ổn định như CI/CD, observability, issue tracker, cloud platform, data warehouse. Chỉ ghi brand cụ thể khi thật sự phổ biến trong ngành.
 
-7. Ghi regulatory, risk, privacy concern.
-   Phần này giúp chatbot biết khi nào phải hỏi xác nhận, tránh tự suy diễn người dùng làm compliance.
+7. Ghi risk, privacy, compliance, reliability concern.
+   Phần này giúp AI biết khi nào cần hỏi xác nhận và không tự gán trách nhiệm cho người dùng.
 
 8. Viết achievement pattern.
-   Pattern là dạng câu để gợi ý khai thác, không phải claim sẵn. Luôn dùng placeholder như `X%`, `Y days`, `Z markets`.
+   Pattern chỉ là dạng khai thác, không phải claim sẵn. Dùng placeholder như `X%`, `Y ms`, `Z users`, `N teams`.
 
 9. Viết discovery questions.
-   Câu hỏi phải giúp người dùng nhớ lại việc thật, số liệu thật, stakeholder thật, hoặc trade-off thật.
+   Câu hỏi phải giúp người dùng nhớ lại việc thật, số liệu thật, stakeholder thật, trade-off thật, hoặc bằng chứng thật.
 
-10. Viết guardrails.
-    Guardrail phải nói rõ điều AI không được tự suy diễn trong ngành đó.
+10. Thiết kế `conversationFollowUp`.
+    Đây là phần quyết định chatbot có biết đào sâu không. Hãy định nghĩa story slots, trigger, completion criteria, và guardrails theo ngành.
 
-## Template
+## Cách Thiết Kế Conversation Follow-up
 
-Use `docs/guides/industry-context-template.yaml` as the copyable base template. The template includes both industry context and `conversationFollowUp` in the same file, because follow-up behavior varies by industry. See `docs/guides/software-development-industry-context.example.yaml` for a filled example.
+`conversationFollowUp.goal` mô tả chatbot cần giúp người dùng kể loại câu chuyện nào trong ngành này.
 
-```yaml
-id: "fintech"
-label: "Fintech"
-version: 1
-active: true
-summary: "Financial products delivered through software, data, and regulated operational workflows."
+`principles` là luật hội thoại ngắn, ví dụ:
 
-businessModels:
-  - "Payments"
-  - "Lending"
-  - "Wealth management"
-  - "B2B financial infrastructure"
+- Hỏi một thứ mỗi lượt.
+- Ưu tiên làm rõ đóng góp cá nhân trước metric.
+- Khi người dùng nói "team mình", hỏi phần họ trực tiếp làm.
+- Khi người dùng nói impact mơ hồ, hỏi metric, bằng chứng, hoặc proxy.
+- Khi có risk, compliance, security, hoặc production incident, hỏi bối cảnh trước khi ghi nhận ownership.
 
-coreWorkflows:
-  - id: "user-onboarding"
-    label: "User onboarding"
-    typicalSteps:
-      - "KYC"
-      - "Risk scoring"
-      - "Account activation"
-    commonMetrics:
-      - "conversion rate"
-      - "KYC pass rate"
-      - "time to activation"
+`storySlots` là các mảnh cần có để câu chuyện đủ giàu. Nên có ít nhất:
 
-keyMetrics:
-  - id: "activation"
-    label: "Activation"
-    category: "product"
-  - id: "fraud-rate"
-    label: "Fraud rate"
-    category: "risk"
+- `scope`: sản phẩm, workflow, system, customer segment, hoặc business area bị ảnh hưởng.
+- `personal-contribution`: người dùng trực tiếp làm gì, quyết định gì, sở hữu phần nào.
+- `industry-context`: chi tiết đặc thù ngành như regulated workflow, production system, clinical process, sales cycle, supply chain step.
+- `impact-metric`: số liệu trước sau, observable change, hoặc proxy evidence.
+- `stakeholders`: ai liên quan, ai được align, ai bị ảnh hưởng.
+- `evidence`: artifact, dashboard, ticket, release note, review, feedback, document.
 
-stakeholders:
-  - "customers"
-  - "risk team"
-  - "compliance"
-  - "engineering"
-  - "operations"
+`triggers` là quy tắc chọn câu hỏi tiếp theo khi user nói một tín hiệu cụ thể. Trigger tốt gồm:
 
-commonTools:
-  - "KYC providers"
-  - "payment gateways"
-  - "risk engines"
-  - "analytics dashboards"
+- `whenUserMentions`: cụm từ người dùng có thể nói.
+- `targetSlotId`: slot cần bổ sung.
+- `priority`: số lớn hơn được hỏi trước.
+- `question`: câu hỏi cụ thể, một ý.
+- `reason`: vì sao cần hỏi câu này để tránh suy diễn hoặc làm câu chuyện sâu hơn.
 
-regulatoryConcerns:
-  - "data privacy"
-  - "KYC/AML"
-  - "auditability"
-  - "consumer protection"
+`completionCriteria` nói khi nào chatbot có thể tóm tắt và xin xác nhận.
 
-achievementPatterns:
-  - "Reduced onboarding drop-off by X%"
-  - "Improved fraud detection while preserving approval rate"
-  - "Launched a compliant payment flow across markets"
+`guardrails` nói rõ AI không được suy diễn điều gì trong ngành này.
 
-discoveryQuestions:
-  - "Did you influence conversion, approval rate, fraud, or compliance?"
-  - "Which risk, compliance, operations, or partner stakeholders were involved?"
-  - "What before-and-after metric proves the workflow improved?"
+## Checklist Field
 
-guardrails:
-  - "Do not invent metrics, employers, tools, regulations, or regulated responsibilities."
-  - "Use this industry context only to ask better questions and propose user-confirmed framings."
-```
+`id`: Stable kebab-case id. Không đổi tùy tiện sau khi đã có dữ liệu tham chiếu.
 
-## Field Checklist
+`label`: Tên ngành cho người đọc.
 
-`id`: Stable kebab-case identifier. Do not rename casually after data references it.
+`version`: Tăng khi ý nghĩa hoặc cấu trúc thay đổi.
 
-`label`: Human-readable industry name.
+`active`: Có được dùng trong retrieval không.
 
-`version`: Increment when the meaning or structure changes.
+`summary`: Một hoặc hai câu về cách ngành vận hành.
 
-`active`: Whether the pack can be used by retrieval.
+`businessModels`: Cách tổ chức trong ngành tạo doanh thu hoặc giá trị.
 
-`summary`: One or two sentences about how the industry works.
+`coreWorkflows`: Workflow lặp lại mà người dùng có thể từng đóng góp.
 
-`businessModels`: How organizations in the industry usually create revenue or value.
+`keyMetrics`: Metric theo nhóm `business`, `product`, `risk`, `operations`, hoặc `people`.
 
-`coreWorkflows`: The recurring operating workflows a user may have contributed to.
+`stakeholders`: Người hoặc nhóm liên quan đến câu chuyện nghề nghiệp.
 
-`keyMetrics`: Metrics grouped by `business`, `product`, `risk`, `operations`, or `people`.
+`commonTools`: Tool category hoặc system class thường xuất hiện.
 
-`stakeholders`: People or teams the user may have collaborated with.
+`regulatoryConcerns`: Constraint cần hỏi cẩn thận.
 
-`commonTools`: Tool categories and systems likely to appear in stories.
+`achievementPatterns`: Dạng thành tựu để gợi nhớ, không phải claim.
 
-`regulatoryConcerns`: Constraints that require careful questioning and no assumption.
+`discoveryQuestions`: Câu hỏi mở để khai thác scope, contribution, metric, stakeholder, trade-off, evidence.
 
-`achievementPatterns`: Reusable shapes for impact discovery.
+`guardrails`: Những điều AI không được tự suy diễn.
 
-`discoveryQuestions`: Context-aware questions the chatbot can ask directly.
-
-`guardrails`: Industry-specific no-go assumptions.
+`conversationFollowUp`: Cách chatbot hỏi tiếp trong ngành này.
 
 ## Quality Bar
 
-A good industry context pack should:
+Một industry context đạt chuẩn khi:
 
-- Help the chatbot ask at least five useful follow-up questions.
-- Include at least three workflows and at least two metrics per important workflow.
-- Include stakeholder and risk context, not only business metrics.
-- Make achievement extraction easier without inventing achievement content.
-- Be understandable to a user outside the industry.
-- Be small enough to retrieve into a conversation brief.
+- Có ít nhất ba workflow quan trọng.
+- Có metric đủ gần với công việc cá nhân để hỏi mà không ép claim.
+- Có stakeholder và risk context, không chỉ business metric.
+- Có `conversationFollowUp.storySlots` đủ để biến một câu trả lời mơ hồ thành story có scope, contribution, impact, evidence.
+- Có trigger cho team outcome, impact mơ hồ, và ít nhất một tín hiệu đặc thù ngành.
+- Có guardrail ngăn AI tự bịa ownership, metric, tool, regulation, hoặc evidence.
+- Người ngoài ngành vẫn đọc hiểu được.
 
-## Review Questions
+## Review Trước Khi Ship
 
-Before shipping a pack, ask:
+- Câu hỏi nào có thể khiến user nhận vơ việc họ không làm?
+- Metric có được viết như khả năng khai thác, không phải giả định không?
+- Risk hoặc compliance có bị biến thành trách nhiệm của user khi chưa xác nhận không?
+- Follow-up có hỏi một ý mỗi lượt không?
+- Có trigger nào giúp chatbot đào sâu khi user nói "we", "team", "improved", "optimized", "launched" không?
+- Khi đủ slot, chatbot có biết tóm tắt và xin xác nhận trước khi lưu fact không?
 
-- Could any discovery question pressure the user to claim something they did not do?
-- Are metrics written as possibilities, not assumptions?
-- Are regulatory concerns treated as context, not as user responsibility?
-- Can the pack support junior, senior, and leadership users without over-claiming ownership?
-- Does every achievement pattern require user confirmation or evidence?
+## Template Và Ví Dụ
 
-## Where This Maps In Code
+Dùng `docs/guides/industry-context-template.yaml` làm base để copy.
 
-- Domain types and built-in packs live in `packages/domain`.
-- Runtime validation schemas live in `packages/contracts`.
-- Conversation policy and brief construction live in `packages/ai`.
-- User claims saved from conversation should become private, provenance-aware career facts.
+Xem ví dụ hoàn chỉnh cho software engineer tại `docs/guides/software-engineer-industry-context.example.yaml`.
+
+## Mapping Trong Code
+
+- Domain types và built-in packs nằm trong `packages/domain`.
+- Runtime validation schemas nằm trong `packages/contracts`.
+- Conversation policy, brief, và follow-up engine nằm trong `packages/ai`.
+- User claims được lưu từ hội thoại phải là private, provenance-aware career facts.

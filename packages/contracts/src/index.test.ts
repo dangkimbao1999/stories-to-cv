@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   careerFactSchema,
-  conversationFollowUpPlaybookSchema,
+  conversationFollowUpSchema,
   createChatSessionSchema,
   cvGenerationRequestSchema,
   industryContextPackSchema,
@@ -135,8 +135,8 @@ describe("industryContextPackSchema", () => {
       discoveryQuestions: ["Did you influence conversion, approval rate, fraud, or compliance?"],
       guardrails: ["Do not invent metrics or regulated responsibilities."],
       conversationFollowUp: {
-        id: "fintech-career-story-excavation",
-        label: "Fintech career story excavation",
+        id: "fintech-conversation-follow-up",
+        label: "Fintech conversation follow-up",
         version: 1,
         active: true,
         goal: "Help users tell accurate fintech career stories.",
@@ -239,11 +239,11 @@ describe("careerFactSchema", () => {
   });
 });
 
-describe("conversationFollowUpPlaybookSchema", () => {
+describe("conversationFollowUpSchema", () => {
   it("requires slots, triggers, and safety rules for multi-turn career story excavation", () => {
-    const playbook = conversationFollowUpPlaybookSchema.parse({
-      id: "career-story-excavation",
-      label: "Career story excavation",
+    const conversationFollowUp = conversationFollowUpSchema.parse({
+      id: "software-engineer-conversation-follow-up",
+      label: "Software engineer conversation follow-up",
       version: 1,
       active: true,
       goal: "Turn vague work memories into private, provenance-aware career stories.",
@@ -280,13 +280,13 @@ describe("conversationFollowUpPlaybookSchema", () => {
       guardrails: ["Ask for confirmation before storing a career fact."],
     });
 
-    expect(playbook.storySlots).toHaveLength(2);
-    expect(playbook.triggers[0]?.targetSlotId).toBe("personal-contribution");
+    expect(conversationFollowUp.storySlots).toHaveLength(2);
+    expect(conversationFollowUp.triggers[0]?.targetSlotId).toBe("personal-contribution");
   });
 
-  it("rejects playbooks with no story slots or no guardrails", () => {
+  it("rejects follow-up definitions with no story slots or no guardrails", () => {
     expect(() =>
-      conversationFollowUpPlaybookSchema.parse({
+      conversationFollowUpSchema.parse({
         id: "unsafe",
         label: "Unsafe",
         version: 1,
