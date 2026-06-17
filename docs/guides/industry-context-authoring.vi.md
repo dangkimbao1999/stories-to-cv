@@ -149,9 +149,9 @@ Một industry context đạt chuẩn khi:
 
 ## Template Và Ví Dụ
 
-Dùng `docs/guides/industry-context-template.yaml` làm base để copy.
+Dùng `packages/domain/industry-contexts/template.yaml` làm base để copy.
 
-Xem ví dụ hoàn chỉnh cho software engineer tại `docs/guides/software-engineer-industry-context.example.yaml`.
+Xem ví dụ hoàn chỉnh cho software engineer tại `packages/domain/industry-contexts/software-engineer.yaml`.
 
 ## Mapping Trong Code
 

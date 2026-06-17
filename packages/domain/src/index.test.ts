@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   createChatSessionDraft,
@@ -148,6 +149,15 @@ describe("knowledge base session rules", () => {
 });
 
 describe("domain content registry", () => {
+  it("keeps industry context YAML artifacts in the domain package for backend processing", () => {
+    const templatePath = new URL("../industry-contexts/template.yaml", import.meta.url);
+    const softwareEngineerPath = new URL("../industry-contexts/software-engineer.yaml", import.meta.url);
+
+    expect(existsSync(templatePath)).toBe(true);
+    expect(existsSync(softwareEngineerPath)).toBe(true);
+    expect(readFileSync(softwareEngineerPath, "utf8")).toContain("conversationFollowUp:");
+  });
+
   it("exposes active domain packs with skills and starter questions", () => {
     const domains = getActiveDomainPacks();
 
