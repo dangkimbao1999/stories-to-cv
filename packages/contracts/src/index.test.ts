@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   careerFactSchema,
+  conversationFollowUpSchema,
   createChatSessionSchema,
   cvGenerationRequestSchema,
   industryContextPackSchema,
@@ -133,9 +134,40 @@ describe("industryContextPackSchema", () => {
       achievementPatterns: ["Reduced onboarding drop-off by X%"],
       discoveryQuestions: ["Did you influence conversion, approval rate, fraud, or compliance?"],
       guardrails: ["Do not invent metrics or regulated responsibilities."],
+      conversationFollowUp: {
+        id: "fintech-conversation-follow-up",
+        label: "Fintech conversation follow-up",
+        version: 1,
+        active: true,
+        goal: "Help users tell accurate fintech career stories.",
+        principles: ["Ask one thing at a time."],
+        storySlots: [
+          {
+            id: "personal-contribution",
+            label: "Personal contribution",
+            required: true,
+            question: "Which part did you personally own?",
+            captureTargets: ["owned scope"],
+            followUpHints: ["Separate user contribution from team outcome."],
+          },
+        ],
+        triggers: [
+          {
+            id: "risk-claim",
+            targetSlotId: "personal-contribution",
+            priority: 100,
+            whenUserMentions: ["risk"],
+            question: "Which risk-related part did you personally own?",
+            reason: "Avoid assuming regulated responsibility.",
+          },
+        ],
+        completionCriteria: ["Required story slots have user-stated answers."],
+        guardrails: ["Do not invent regulated responsibilities."],
+      },
     });
 
     expect(pack.coreWorkflows[0]?.commonMetrics).toContain("conversion rate");
+    expect(pack.conversationFollowUp.triggers[0]?.id).toBe("risk-claim");
     expect(pack.guardrails).toContain("Do not invent metrics or regulated responsibilities.");
   });
 
@@ -204,5 +236,68 @@ describe("careerFactSchema", () => {
 
     expect(fact.evidenceStatus).toBe("user_stated");
     expect(fact.sensitivity).toBe("private");
+  });
+});
+
+describe("conversationFollowUpSchema", () => {
+  it("requires slots, triggers, and safety rules for multi-turn career story excavation", () => {
+    const conversationFollowUp = conversationFollowUpSchema.parse({
+      id: "software-engineer-conversation-follow-up",
+      label: "Software engineer conversation follow-up",
+      version: 1,
+      active: true,
+      goal: "Turn vague work memories into private, provenance-aware career stories.",
+      principles: ["Ask one thing at a time.", "Do not turn team outcomes into personal facts without confirmation."],
+      storySlots: [
+        {
+          id: "personal-contribution",
+          label: "Personal contribution",
+          required: true,
+          question: "Which part did you personally own?",
+          captureTargets: ["owned scope", "implementation detail"],
+          followUpHints: ["Separate team outcome from user contribution."],
+        },
+        {
+          id: "impact-metric",
+          label: "Impact metric",
+          required: true,
+          question: "What before-and-after metric changed?",
+          captureTargets: ["metric", "before state", "after state"],
+          followUpHints: ["Ask for proxy evidence if exact numbers are unavailable."],
+        },
+      ],
+      triggers: [
+        {
+          id: "team-outcome-claim",
+          targetSlotId: "personal-contribution",
+          priority: 100,
+          whenUserMentions: ["we built", "my team"],
+          question: "What part did you personally handle?",
+          reason: "Separate personal contribution from team outcome.",
+        },
+      ],
+      completionCriteria: ["Required slots have user-stated answers."],
+      guardrails: ["Ask for confirmation before storing a career fact."],
+    });
+
+    expect(conversationFollowUp.storySlots).toHaveLength(2);
+    expect(conversationFollowUp.triggers[0]?.targetSlotId).toBe("personal-contribution");
+  });
+
+  it("rejects follow-up definitions with no story slots or no guardrails", () => {
+    expect(() =>
+      conversationFollowUpSchema.parse({
+        id: "unsafe",
+        label: "Unsafe",
+        version: 1,
+        active: true,
+        goal: "Ask anything.",
+        principles: ["Ask questions."],
+        storySlots: [],
+        triggers: [],
+        completionCriteria: [],
+        guardrails: [],
+      }),
+    ).toThrow();
   });
 });

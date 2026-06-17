@@ -94,6 +94,39 @@ export const industryMetricContextSchema = z.object({
   category: industryMetricCategorySchema,
 });
 
+export const conversationStorySlotSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  required: z.boolean(),
+  question: z.string().min(1),
+  captureTargets: nonEmptyStringArraySchema,
+  followUpHints: nonEmptyStringArraySchema,
+});
+
+export const conversationFollowUpTriggerSchema = z.object({
+  id: entityIdSchema,
+  targetSlotId: entityIdSchema,
+  priority: z.number().int().nonnegative(),
+  whenUserMentions: nonEmptyStringArraySchema,
+  question: z.string().min(1),
+  reason: z.string().min(1),
+});
+
+export const conversationFollowUpSchema = z.object({
+  id: entityIdSchema,
+  label: z.string().min(1),
+  version: z.number().int().positive(),
+  active: z.boolean(),
+  goal: z.string().min(1),
+  principles: nonEmptyStringArraySchema,
+  storySlots: z.array(conversationStorySlotSchema).min(1),
+  triggers: z.array(conversationFollowUpTriggerSchema).min(1),
+  completionCriteria: nonEmptyStringArraySchema,
+  guardrails: nonEmptyStringArraySchema,
+});
+
+export type ConversationFollowUpInput = z.infer<typeof conversationFollowUpSchema>;
+
 export const industryContextPackSchema = z.object({
   id: entityIdSchema,
   label: z.string().min(1),
@@ -109,6 +142,7 @@ export const industryContextPackSchema = z.object({
   achievementPatterns: nonEmptyStringArraySchema,
   discoveryQuestions: nonEmptyStringArraySchema,
   guardrails: nonEmptyStringArraySchema,
+  conversationFollowUp: conversationFollowUpSchema,
 });
 
 export type IndustryContextPackInput = z.infer<typeof industryContextPackSchema>;

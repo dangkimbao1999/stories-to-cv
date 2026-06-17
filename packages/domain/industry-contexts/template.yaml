@@ -1,0 +1,184 @@
+# Copy this file when authoring a new industry context.
+# Keep user claims out of this file. This is only context for better questioning.
+# Define conversationFollowUp here, not in a separate follow-up file.
+
+id: "<stable-kebab-case-industry-id>"
+label: "<Human-readable industry or role-family name>"
+version: 1
+active: true
+summary: "<One or two sentences about how this industry creates value, operates, and what constraints matter.>"
+
+businessModels:
+  - "<How organizations in this industry create revenue or value>"
+  - "<Another common business model>"
+
+coreWorkflows:
+  - id: "<stable-kebab-case-workflow-id>"
+    label: "<Workflow name>"
+    typicalSteps:
+      - "<Step users may have participated in>"
+      - "<Step users may have coordinated or improved>"
+      - "<Step users may have measured or reviewed>"
+    commonMetrics:
+      - "<Metric a user may have influenced or observed>"
+      - "<Another workflow-level metric>"
+
+keyMetrics:
+  - id: "<stable-kebab-case-metric-id>"
+    label: "<Metric name>"
+    category: "<business|product|risk|operations|people>"
+  - id: "<another-metric-id>"
+    label: "<Another metric name>"
+    category: "<business|product|risk|operations|people>"
+
+stakeholders:
+  - "<End users or customers>"
+  - "<Internal collaborator or team>"
+  - "<External partner, vendor, regulator, or operator if relevant>"
+
+commonTools:
+  - "<Tool category or system class>"
+  - "<Another tool category or system class>"
+
+regulatoryConcerns:
+  - "<Privacy, safety, compliance, reliability, or audit concern>"
+  - "<Another constraint where the chatbot must avoid assumptions>"
+
+achievementPatterns:
+  - "<Improved X by Y through Z>"
+  - "<Reduced X from A to B>"
+  - "<Launched or migrated X for Y users, teams, markets, or systems>"
+
+discoveryQuestions:
+  - "<Question that helps the user recall real scope, metric, stakeholder, or trade-off>"
+  - "<Question that probes evidence without implying ownership>"
+  - "<Question that asks for before-and-after state>"
+
+guardrails:
+  - "Do not invent metrics, employers, tools, regulations, responsibilities, scope, seniority, or evidence."
+  - "Use this context only to ask better questions and propose user-confirmed framings."
+  - "<Industry-specific assumption the chatbot must not make>"
+
+conversationFollowUp:
+  id: "<industry-id>-conversation-follow-up"
+  label: "<Industry name> conversation follow-up"
+  version: 1
+  active: true
+  goal: "<How follow-up questions should help users tell richer, accurate stories in this industry.>"
+  principles:
+    - "Ask one thing at a time."
+    - "Probe personal contribution before turning team outcomes into user facts."
+    - "Treat every unverified framing as a hypothesis that needs user confirmation."
+    - "<Industry-specific conversation principle>"
+
+  storySlots:
+    - id: "scope"
+      label: "Scope"
+      required: true
+      question: "<Which product, workflow, customer segment, system, or business area did this work affect?>"
+      captureTargets:
+        - "project or workflow boundary"
+        - "affected users, customers, systems, or teams"
+      followUpHints:
+        - "Anchor the story before asking for impact."
+
+    - id: "personal-contribution"
+      label: "Personal contribution"
+      required: true
+      question: "Which part did you personally own or directly deliver?"
+      captureTargets:
+        - "owned scope"
+        - "direct actions"
+        - "decision rights"
+      followUpHints:
+        - "Separate the user's contribution from team or company outcomes."
+
+    - id: "<industry-context-slot-id>"
+      label: "<Industry-specific context>"
+      required: true
+      question: "<Question that reveals an industry-specific workflow, constraint, stakeholder, risk, or system context.>"
+      captureTargets:
+        - "<Industry-specific detail to capture>"
+      followUpHints:
+        - "<How the chatbot should ask this safely.>"
+
+    - id: "impact-metric"
+      label: "Impact metric"
+      required: true
+      question: "What before-and-after metric, observable change, or proxy evidence shows the work mattered?"
+      captureTargets:
+        - "metric"
+        - "before state"
+        - "after state"
+        - "proxy evidence"
+      followUpHints:
+        - "Ask for directional or qualitative evidence if exact metrics are unavailable."
+
+    - id: "stakeholders"
+      label: "Stakeholders"
+      required: false
+      question: "Who else had to be aligned, supported, or protected for this work to succeed?"
+      captureTargets:
+        - "stakeholders"
+        - "collaboration pattern"
+        - "approval or dependency path"
+      followUpHints:
+        - "Do not imply authority the user has not claimed."
+
+    - id: "evidence"
+      label: "Evidence"
+      required: false
+      question: "What private evidence could support this story if you choose to save it?"
+      captureTargets:
+        - "document"
+        - "dashboard"
+        - "ticket"
+        - "review"
+        - "feedback"
+      followUpHints:
+        - "Ask for the kind of evidence, not sensitive raw data."
+
+  triggers:
+    - id: "team-outcome-claim"
+      targetSlotId: "personal-contribution"
+      priority: 100
+      whenUserMentions:
+        - "we built"
+        - "our team"
+        - "my team"
+        - "we launched"
+        - "we improved"
+      question: "What part did you personally own or directly deliver?"
+      reason: "Separate the user's contribution from a team outcome before storing facts."
+
+    - id: "vague-impact"
+      targetSlotId: "impact-metric"
+      priority: 80
+      whenUserMentions:
+        - "improved"
+        - "optimized"
+        - "reduced"
+        - "increased"
+        - "faster"
+        - "better"
+      question: "What before-and-after metric, observable change, or proxy evidence shows the work mattered?"
+      reason: "The user described impact without concrete evidence yet."
+
+    - id: "<industry-specific-trigger-id>"
+      targetSlotId: "<industry-context-slot-id>"
+      priority: 90
+      whenUserMentions:
+        - "<Industry-specific phrase or concept>"
+      question: "<Industry-specific follow-up question>"
+      reason: "<Why this question matters in this industry.>"
+
+  completionCriteria:
+    - "Required story slots have user-stated answers."
+    - "Team outcomes are separated from the user's direct contribution."
+    - "Any suggested framing is confirmed by the user before becoming a career fact."
+
+  guardrails:
+    - "Do not invent metrics, ownership, seniority, employers, tools, regulations, or evidence."
+    - "Do not turn team outcomes into individual facts without explicit confirmation."
+    - "Ask for one missing slot at a time."
+    - "<Industry-specific no-go assumption>"

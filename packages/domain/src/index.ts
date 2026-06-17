@@ -232,6 +232,37 @@ export function getActiveDomainPacks(): DomainPack[] {
     }));
 }
 
+export interface ConversationStorySlot {
+  id: EntityId;
+  label: string;
+  required: boolean;
+  question: string;
+  captureTargets: string[];
+  followUpHints: string[];
+}
+
+export interface ConversationFollowUpTrigger {
+  id: EntityId;
+  targetSlotId: EntityId;
+  priority: number;
+  whenUserMentions: string[];
+  question: string;
+  reason: string;
+}
+
+export interface ConversationFollowUp {
+  id: EntityId;
+  label: string;
+  version: number;
+  active: boolean;
+  goal: string;
+  principles: string[];
+  storySlots: ConversationStorySlot[];
+  triggers: ConversationFollowUpTrigger[];
+  completionCriteria: string[];
+  guardrails: string[];
+}
+
 export interface IndustryWorkflowContext {
   id: EntityId;
   label: string;
@@ -260,6 +291,7 @@ export interface IndustryContextPack {
   achievementPatterns: string[];
   discoveryQuestions: string[];
   guardrails: string[];
+  conversationFollowUp: ConversationFollowUp;
 }
 
 export interface RoleSeniorityContext {
@@ -356,6 +388,122 @@ export const industryContextPacks: IndustryContextPack[] = [
       "Do not invent metrics, employers, tools, regulations, or regulated responsibilities.",
       "Use fintech context only to ask better questions and propose user-confirmed framings.",
     ],
+    conversationFollowUp: {
+      id: "fintech-conversation-follow-up",
+      label: "Fintech conversation follow-up",
+      version: 1,
+      active: true,
+      goal: "Help users turn fintech work memories into accurate, private, provenance-aware career stories.",
+      principles: [
+        "Ask one thing at a time.",
+        "Probe personal contribution before turning team outcomes into user facts.",
+        "Use fintech language to clarify context, not to invent regulated responsibility.",
+      ],
+      storySlots: [
+        {
+          id: "scope",
+          label: "Scope",
+          required: true,
+          question: "Which fintech product, workflow, customer segment, or system did this work affect?",
+          captureTargets: ["product or workflow", "customer or market segment", "system boundary"],
+          followUpHints: [
+            "Anchor the story in a concrete fintech workflow before asking for impact.",
+            "Separate product scope from technical implementation scope when both appear.",
+          ],
+        },
+        {
+          id: "personal-contribution",
+          label: "Personal contribution",
+          required: true,
+          question: "Which part did you personally own or directly deliver?",
+          captureTargets: ["owned responsibility", "decision made", "implementation detail"],
+          followUpHints: [
+            "Separate the user's contribution from the team's outcome.",
+            "Ask what they decided, built, coordinated, analyzed, or validated.",
+          ],
+        },
+        {
+          id: "regulated-workflow-context",
+          label: "Regulated workflow context",
+          required: true,
+          question: "Which regulated workflow, risk decision, or compliance constraint shaped this work?",
+          captureTargets: ["regulated workflow", "risk constraint", "compliance context"],
+          followUpHints: [
+            "Ask what the user actually did before framing compliance responsibility.",
+            "Separate product, operations, risk, and compliance ownership.",
+          ],
+        },
+        {
+          id: "impact-metric",
+          label: "Impact metric",
+          required: true,
+          question: "What before-and-after metric, observable change, or proxy evidence shows the work mattered?",
+          captureTargets: ["metric", "before state", "after state", "proxy evidence"],
+          followUpHints: [
+            "Prefer user-stated numbers, but accept directional or qualitative evidence when exact metrics are private.",
+            "Ask whether the impact was on conversion, approval rate, fraud, compliance, revenue, or operations.",
+          ],
+        },
+        {
+          id: "stakeholders",
+          label: "Stakeholders",
+          required: false,
+          question: "Who else had to be aligned or protected for this work to succeed?",
+          captureTargets: ["stakeholder", "approval path", "collaboration pattern"],
+          followUpHints: [
+            "Look for risk, compliance, operations, engineering, partner, or customer stakeholders.",
+            "Do not imply authority the user has not claimed.",
+          ],
+        },
+        {
+          id: "evidence",
+          label: "Evidence",
+          required: false,
+          question: "What private evidence could support this story if you choose to save it?",
+          captureTargets: ["document", "dashboard", "ticket", "review", "feedback"],
+          followUpHints: [
+            "Keep evidence private unless the user explicitly chooses to share it.",
+            "Ask for the kind of evidence, not sensitive raw data.",
+          ],
+        },
+      ],
+      triggers: [
+        {
+          id: "compliance-or-risk-claim",
+          targetSlotId: "regulated-workflow-context",
+          priority: 110,
+          whenUserMentions: ["compliance", "risk", "kyc", "aml", "fraud", "approval rate"],
+          question: "Which regulated workflow, risk decision, or compliance constraint shaped this work?",
+          reason: "Fintech stories need careful context before claiming regulated responsibility.",
+        },
+        {
+          id: "team-outcome-claim",
+          targetSlotId: "personal-contribution",
+          priority: 100,
+          whenUserMentions: ["we built", "our team", "my team", "we launched", "we improved"],
+          question: "What part did you personally own or directly deliver?",
+          reason: "Team outcomes must be separated from the user's confirmed contribution.",
+        },
+        {
+          id: "vague-impact",
+          targetSlotId: "impact-metric",
+          priority: 80,
+          whenUserMentions: ["improved", "optimized", "reduced", "increased", "faster", "better"],
+          question: "What before-and-after metric, observable change, or proxy evidence shows the work mattered?",
+          reason: "The user described impact without concrete evidence yet.",
+        },
+      ],
+      completionCriteria: [
+        "Required story slots have user-stated answers.",
+        "Any regulated responsibility or metric is confirmed by the user.",
+        "The next saved fact can distinguish user contribution from team context.",
+      ],
+      guardrails: [
+        "Do not invent metrics, employers, tools, regulations, or regulated responsibilities.",
+        "Do not imply the user owned compliance or risk unless they explicitly state it.",
+        "Ask for confirmation before saving a career fact to the knowledge base.",
+      ],
+    },
   },
 ];
 

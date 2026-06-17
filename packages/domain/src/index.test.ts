@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   createChatSessionDraft,
@@ -148,6 +149,15 @@ describe("knowledge base session rules", () => {
 });
 
 describe("domain content registry", () => {
+  it("keeps industry context YAML artifacts in the domain package for backend processing", () => {
+    const templatePath = new URL("../industry-contexts/template.yaml", import.meta.url);
+    const softwareEngineerPath = new URL("../industry-contexts/software-engineer.yaml", import.meta.url);
+
+    expect(existsSync(templatePath)).toBe(true);
+    expect(existsSync(softwareEngineerPath)).toBe(true);
+    expect(readFileSync(softwareEngineerPath, "utf8")).toContain("conversationFollowUp:");
+  });
+
   it("exposes active domain packs with skills and starter questions", () => {
     const domains = getActiveDomainPacks();
 
@@ -179,6 +189,32 @@ describe("domain content registry", () => {
             expect.stringContaining("conversion, approval rate, fraud, or compliance"),
           ]),
           guardrails: expect.arrayContaining([expect.stringContaining("Do not invent metrics")]),
+          conversationFollowUp: expect.objectContaining({
+            id: "fintech-conversation-follow-up",
+            principles: expect.arrayContaining([
+              "Probe personal contribution before turning team outcomes into user facts.",
+            ]),
+            storySlots: expect.arrayContaining([
+              expect.objectContaining({
+                id: "personal-contribution",
+                required: true,
+              }),
+              expect.objectContaining({
+                id: "regulated-workflow-context",
+                question: expect.stringContaining("regulated workflow"),
+              }),
+              expect.objectContaining({
+                id: "impact-metric",
+                required: true,
+              }),
+            ]),
+            triggers: expect.arrayContaining([
+              expect.objectContaining({
+                id: "compliance-or-risk-claim",
+                targetSlotId: "regulated-workflow-context",
+              }),
+            ]),
+          }),
         }),
       ]),
     );

@@ -1,0 +1,385 @@
+id: "software-engineer"
+label: "Software Engineer"
+version: 1
+active: true
+summary: "Software engineers create value by designing, building, testing, shipping, operating, and improving software systems. Strong career stories usually connect technical work to users, system quality, delivery speed, reliability, cost, security, or business outcomes."
+
+businessModels:
+  - "SaaS subscription"
+  - "Consumer application"
+  - "Internal platform or enterprise tooling"
+  - "Marketplace or transaction platform"
+  - "Developer tools or infrastructure"
+  - "Professional services with custom software delivery"
+
+coreWorkflows:
+  - id: "feature-delivery"
+    label: "Feature delivery"
+    typicalSteps:
+      - "Clarify product requirement and acceptance criteria"
+      - "Design technical approach and dependencies"
+      - "Implement feature changes"
+      - "Review code and test behavior"
+      - "Release, monitor, and iterate"
+    commonMetrics:
+      - "feature adoption"
+      - "conversion rate"
+      - "delivery cycle time"
+      - "defect rate"
+
+  - id: "backend-service-development"
+    label: "Backend service development"
+    typicalSteps:
+      - "Model domain data and API contracts"
+      - "Implement service logic"
+      - "Integrate databases, queues, or external APIs"
+      - "Add tests, observability, and error handling"
+      - "Deploy and monitor production behavior"
+    commonMetrics:
+      - "latency"
+      - "throughput"
+      - "error rate"
+      - "availability"
+      - "infrastructure cost"
+
+  - id: "frontend-application-development"
+    label: "Frontend application development"
+    typicalSteps:
+      - "Translate UX requirements into UI states"
+      - "Implement components and client-side flows"
+      - "Integrate APIs and validation"
+      - "Test responsive behavior and accessibility"
+      - "Measure user behavior after release"
+    commonMetrics:
+      - "task completion rate"
+      - "conversion rate"
+      - "page load time"
+      - "accessibility issue count"
+      - "support ticket volume"
+
+  - id: "quality-and-test-automation"
+    label: "Quality and test automation"
+    typicalSteps:
+      - "Identify risky workflows"
+      - "Add unit, integration, contract, or end-to-end tests"
+      - "Improve CI reliability"
+      - "Reduce flaky tests"
+      - "Track escaped defects"
+    commonMetrics:
+      - "test coverage"
+      - "build pass rate"
+      - "flaky test rate"
+      - "escaped defect count"
+      - "mean time to detect regression"
+
+  - id: "production-reliability"
+    label: "Production reliability"
+    typicalSteps:
+      - "Detect incident or reliability risk"
+      - "Triage logs, traces, metrics, and user reports"
+      - "Mitigate immediate impact"
+      - "Fix root cause"
+      - "Add monitoring, alerts, or runbooks"
+    commonMetrics:
+      - "uptime"
+      - "error rate"
+      - "mean time to recovery"
+      - "incident count"
+      - "alert noise"
+
+  - id: "technical-debt-and-modernization"
+    label: "Technical debt and modernization"
+    typicalSteps:
+      - "Identify maintenance or scaling constraint"
+      - "Propose migration or refactor plan"
+      - "Reduce risk with tests and staged rollout"
+      - "Migrate code, data, or infrastructure"
+      - "Measure developer productivity or system improvement"
+    commonMetrics:
+      - "build time"
+      - "deployment frequency"
+      - "change failure rate"
+      - "developer onboarding time"
+      - "maintenance cost"
+
+keyMetrics:
+  - id: "latency"
+    label: "Latency"
+    category: "operations"
+  - id: "availability"
+    label: "Availability"
+    category: "operations"
+  - id: "error-rate"
+    label: "Error rate"
+    category: "operations"
+  - id: "deployment-frequency"
+    label: "Deployment frequency"
+    category: "operations"
+  - id: "cycle-time"
+    label: "Delivery cycle time"
+    category: "operations"
+  - id: "defect-rate"
+    label: "Defect rate"
+    category: "product"
+  - id: "adoption"
+    label: "Feature adoption"
+    category: "product"
+  - id: "conversion"
+    label: "Conversion"
+    category: "business"
+  - id: "cloud-cost"
+    label: "Cloud or infrastructure cost"
+    category: "business"
+  - id: "team-productivity"
+    label: "Team productivity"
+    category: "people"
+
+stakeholders:
+  - "end users"
+  - "customers"
+  - "product managers"
+  - "designers"
+  - "QA engineers"
+  - "security team"
+  - "SRE or operations team"
+  - "data team"
+  - "customer support"
+  - "engineering managers"
+  - "technical leads"
+
+commonTools:
+  - "issue trackers"
+  - "version control systems"
+  - "CI/CD pipelines"
+  - "cloud platforms"
+  - "container orchestration"
+  - "databases and caches"
+  - "message queues"
+  - "observability dashboards"
+  - "feature flag systems"
+  - "test automation frameworks"
+  - "API documentation tools"
+
+regulatoryConcerns:
+  - "data privacy"
+  - "security review"
+  - "access control"
+  - "audit logging"
+  - "production change management"
+  - "customer data handling"
+  - "availability and incident response expectations"
+
+achievementPatterns:
+  - "Reduced API latency from X ms to Y ms for Z users or requests."
+  - "Improved deployment frequency from X to Y while keeping change failure rate stable."
+  - "Migrated X service, module, or workflow with no critical production incidents."
+  - "Reduced defect rate, flaky tests, or support tickets by X%."
+  - "Built a feature adopted by X users, teams, customers, or markets."
+  - "Cut infrastructure cost by X% through architecture, query, or resource optimization."
+  - "Improved developer productivity by reducing build time, onboarding time, or manual work."
+
+discoveryQuestions:
+  - "What system, workflow, or user-facing feature did the work affect?"
+  - "Which part did you personally design, implement, review, debug, or operate?"
+  - "Was the impact on users, reliability, performance, cost, security, quality, or team velocity?"
+  - "What changed before and after the work?"
+  - "What tests, monitoring, rollout plan, or incident evidence supports the story?"
+  - "Who depended on this work: users, product, support, operations, security, or other engineers?"
+  - "Was there a trade-off between speed, quality, reliability, cost, or scope?"
+
+guardrails:
+  - "Do not invent metrics, employers, products, tools, architecture, seniority, ownership, or production impact."
+  - "Do not assume the user owned the whole system when they only mention a team outcome."
+  - "Do not turn implementation detail into business impact unless the user states the connection."
+  - "Do not imply production, security, or incident responsibility without user confirmation."
+  - "Use software engineering context only to ask better questions and propose user-confirmed framings."
+
+conversationFollowUp:
+  id: "software-engineer-conversation-follow-up"
+  label: "Software engineer conversation follow-up"
+  version: 1
+  active: true
+  goal: "Help users turn vague engineering memories into concrete, truthful career stories with scope, personal contribution, technical context, impact, quality or risk context, and private evidence."
+  principles:
+    - "Ask one thing at a time."
+    - "Clarify the system or workflow boundary before asking for impact."
+    - "Probe personal contribution before turning team outcomes into user facts."
+    - "Translate technical detail into user, business, reliability, cost, quality, security, or team impact only after the user confirms the link."
+    - "Ask for evidence or proxy evidence when exact metrics are unavailable."
+    - "Treat production, security, and incident ownership as sensitive claims that require confirmation."
+
+  storySlots:
+    - id: "scope"
+      label: "Scope"
+      required: true
+      question: "Which product, workflow, service, module, or user journey did this engineering work affect?"
+      captureTargets:
+        - "product or workflow"
+        - "service, module, or system boundary"
+        - "affected users, customers, teams, or traffic"
+      followUpHints:
+        - "Anchor the story in a concrete system or user journey."
+        - "Ask whether the work was user-facing, internal, platform, infrastructure, or reliability-oriented."
+
+    - id: "personal-contribution"
+      label: "Personal contribution"
+      required: true
+      question: "Which part did you personally design, implement, debug, review, migrate, or operate?"
+      captureTargets:
+        - "owned technical scope"
+        - "direct implementation"
+        - "decision made"
+        - "collaboration role"
+      followUpHints:
+        - "Separate individual contribution from team delivery."
+        - "Ask what they changed in code, architecture, tests, rollout, monitoring, or process."
+
+    - id: "technical-context"
+      label: "Technical context"
+      required: true
+      question: "What technical constraint or design choice made this work important?"
+      captureTargets:
+        - "architecture constraint"
+        - "performance bottleneck"
+        - "data or integration dependency"
+        - "legacy constraint"
+        - "security or reliability concern"
+      followUpHints:
+        - "Keep the explanation accessible enough for CV use."
+        - "Ask for the problem behind the technical work, not only the implementation detail."
+
+    - id: "impact-metric"
+      label: "Impact metric"
+      required: true
+      question: "What changed after the work: user behavior, latency, error rate, cost, delivery speed, quality, reliability, or support volume?"
+      captureTargets:
+        - "metric"
+        - "before state"
+        - "after state"
+        - "proxy evidence"
+      followUpHints:
+        - "If exact numbers are private or unavailable, ask for relative change or observable outcome."
+        - "Do not infer business impact from technical work unless the user states it."
+
+    - id: "quality-risk"
+      label: "Quality or risk context"
+      required: false
+      question: "What tests, monitoring, rollout strategy, security review, or risk mitigation helped make this safe?"
+      captureTargets:
+        - "tests"
+        - "monitoring"
+        - "rollout plan"
+        - "security or privacy check"
+        - "incident prevention or mitigation"
+      followUpHints:
+        - "Ask this when the work touched production, customer data, reliability, migrations, or high-risk flows."
+        - "Do not imply the user owned risk approval unless they say so."
+
+    - id: "stakeholders"
+      label: "Stakeholders"
+      required: false
+      question: "Who depended on or collaborated around this work?"
+      captureTargets:
+        - "product or design partner"
+        - "QA, SRE, security, data, support, or customer stakeholder"
+        - "review or approval path"
+      followUpHints:
+        - "Look for cross-functional collaboration without inflating leadership scope."
+
+    - id: "evidence"
+      label: "Evidence"
+      required: false
+      question: "What private evidence could support this story if you choose to save it?"
+      captureTargets:
+        - "pull request"
+        - "ticket"
+        - "design document"
+        - "release note"
+        - "dashboard"
+        - "incident report"
+        - "performance profile"
+        - "feedback"
+      followUpHints:
+        - "Ask for the type of evidence, not sensitive repository links or customer data."
+        - "Remind the user they can keep evidence private in their knowledge base."
+
+  triggers:
+    - id: "team-delivery-claim"
+      targetSlotId: "personal-contribution"
+      priority: 110
+      whenUserMentions:
+        - "we built"
+        - "our team built"
+        - "my team launched"
+        - "we migrated"
+        - "we shipped"
+        - "team delivered"
+      question: "What part did you personally design, implement, debug, review, migrate, or operate?"
+      reason: "Engineering stories often start as team delivery claims, so the chatbot must isolate the user's direct contribution before saving facts."
+
+    - id: "performance-claim"
+      targetSlotId: "impact-metric"
+      priority: 100
+      whenUserMentions:
+        - "optimized"
+        - "faster"
+        - "latency"
+        - "performance"
+        - "throughput"
+        - "slow query"
+      question: "What changed after the optimization, and do you remember the before-and-after metric or a proxy?"
+      reason: "Performance claims need measurable or observable evidence."
+
+    - id: "reliability-claim"
+      targetSlotId: "quality-risk"
+      priority: 95
+      whenUserMentions:
+        - "incident"
+        - "outage"
+        - "production"
+        - "rollback"
+        - "monitoring"
+        - "alert"
+        - "reliability"
+      question: "What tests, monitoring, rollout strategy, or mitigation made the production change safer?"
+      reason: "Production and reliability stories need risk context before claiming ownership or impact."
+
+    - id: "technical-work-without-context"
+      targetSlotId: "technical-context"
+      priority: 90
+      whenUserMentions:
+        - "refactored"
+        - "rewrote"
+        - "migrated"
+        - "implemented"
+        - "integrated"
+        - "fixed"
+      question: "What technical constraint or design choice made that work important?"
+      reason: "Implementation details become stronger career stories when connected to the underlying technical problem."
+
+    - id: "vague-impact"
+      targetSlotId: "impact-metric"
+      priority: 80
+      whenUserMentions:
+        - "improved"
+        - "reduced"
+        - "increased"
+        - "better"
+        - "helped"
+        - "saved time"
+      question: "What changed after the work: user behavior, latency, error rate, cost, delivery speed, quality, reliability, or support volume?"
+      reason: "The user described impact without concrete evidence yet."
+
+  completionCriteria:
+    - "Required story slots have user-stated answers."
+    - "Team outcome and personal contribution are separated."
+    - "Technical work is connected to a user, business, reliability, cost, quality, security, or team impact only when the user confirms the link."
+    - "Any metric, production responsibility, security responsibility, or architecture ownership is confirmed by the user."
+    - "The chatbot can summarize the story and ask the user to confirm before saving a career fact."
+
+  guardrails:
+    - "Do not invent metrics, ownership, architecture, tools, seniority, employers, production impact, or evidence."
+    - "Do not assume the user owned a whole service, incident, migration, or security decision unless they explicitly state it."
+    - "Do not expose repository links, customer data, credentials, logs, or private incident details in generated output."
+    - "Do not translate code changes into business impact unless the user states or confirms the connection."
+    - "Ask one missing slot at a time and let the user skip private details."
