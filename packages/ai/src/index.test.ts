@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildIndustryAwareConversationBrief,
   buildNextCareerStoryFollowUp,
+  buildNextIndustryCareerStoryFollowUp,
   createLlmLanguageModel,
   createLlmProviderConfig,
   industryAwareCareerAssistantPolicy,
@@ -298,5 +299,38 @@ describe("career story follow-up engine", () => {
         playbook,
       }).slotId,
     ).toBe("evidence");
+  });
+
+  it("can use a follow-up playbook embedded directly in the industry context", () => {
+    const followUp = buildNextIndustryCareerStoryFollowUp({
+      latestUserMessage: "I worked with compliance to reduce onboarding risk.",
+      answeredSlotIds: ["scope"],
+      industry: {
+        id: "fintech",
+        label: "Fintech",
+        conversationFollowUp: {
+          ...playbook,
+          triggers: [
+            {
+              id: "compliance-or-risk-claim",
+              targetSlotId: "tradeoff",
+              priority: 110,
+              whenUserMentions: ["compliance", "risk"],
+              question: "What regulated workflow, risk decision, or compliance constraint shaped your work?",
+              reason: "Fintech stories need careful context before claiming regulated responsibility.",
+            },
+            ...playbook.triggers,
+          ],
+        },
+      },
+    });
+
+    expect(followUp).toEqual(
+      expect.objectContaining({
+        slotId: "tradeoff",
+        triggerId: "compliance-or-risk-claim",
+        question: expect.stringContaining("regulated workflow"),
+      }),
+    );
   });
 });

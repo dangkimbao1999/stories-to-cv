@@ -57,3 +57,65 @@ guardrails:
   - "Do not invent metrics, employers, tools, regulations, responsibilities, or scope."
   - "Use this context only to ask better questions and propose user-confirmed framings."
   - "<Industry-specific assumption the chatbot must not make>"
+
+conversationFollowUp:
+  id: "<industry-id>-career-story-excavation"
+  label: "<Industry name> career story excavation"
+  version: 1
+  active: true
+  goal: "<How follow-up questions should help users tell richer, accurate stories in this industry.>"
+  principles:
+    - "Ask one thing at a time."
+    - "Probe personal contribution before turning team outcomes into user facts."
+    - "Treat every unverified framing as a hypothesis that needs user confirmation."
+    - "<Industry-specific conversation principle>"
+  storySlots:
+    - id: "personal-contribution"
+      label: "Personal contribution"
+      required: true
+      question: "Which part did you personally own or directly deliver?"
+      captureTargets:
+        - "owned scope"
+        - "direct actions"
+        - "decision rights"
+      followUpHints:
+        - "Separate the user's contribution from team or company outcomes."
+
+    - id: "<industry-specific-slot-id>"
+      label: "<Industry-specific slot label>"
+      required: true
+      question: "<Question that reveals an industry-specific workflow, constraint, stakeholder, or risk.>"
+      captureTargets:
+        - "<Industry-specific detail to capture>"
+      followUpHints:
+        - "<How the chatbot should ask this safely.>"
+
+  triggers:
+    - id: "team-outcome-claim"
+      targetSlotId: "personal-contribution"
+      priority: 100
+      whenUserMentions:
+        - "we built"
+        - "our team"
+        - "we launched"
+      question: "What part did you personally own or directly deliver?"
+      reason: "Separate the user's contribution from a team outcome before storing facts."
+
+    - id: "<industry-specific-trigger-id>"
+      targetSlotId: "<industry-specific-slot-id>"
+      priority: 90
+      whenUserMentions:
+        - "<Industry-specific phrase or concept>"
+      question: "<Industry-specific follow-up question>"
+      reason: "<Why this question matters in this industry.>"
+
+  completionCriteria:
+    - "Required story slots have user-stated answers."
+    - "Team outcomes are separated from the user's direct contribution."
+    - "Any suggested framing is confirmed by the user before becoming a career fact."
+
+  guardrails:
+    - "Do not invent metrics, ownership, seniority, employers, tools, regulations, or evidence."
+    - "Do not turn team outcomes into individual facts without explicit confirmation."
+    - "Ask for one missing slot at a time."
+    - "<Industry-specific no-go assumption>"

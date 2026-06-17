@@ -2,6 +2,8 @@
 
 Mục tiêu của playbook này là biến industry/role context thành hành vi hội thoại nhiều lượt. Chatbot không chỉ hỏi câu mở đầu, mà biết đang thiếu mảnh nào của câu chuyện, khi nào cần đào sâu, và khi nào phải dừng lại để tránh ép người dùng nhận vơ thành tựu.
 
+Authoring rule: define `conversationFollowUp` inside the same industry context file. A standalone playbook is only a reusable base or fallback; the industry pack is the source of truth for how that industry should follow up.
+
 ## Mục Tiêu
 
 Một follow-up tốt giúp người dùng:
@@ -18,6 +20,8 @@ Một follow-up tốt giúp người dùng:
 1. Industry context trả lời: ngành này có workflow, metric, stakeholder, risk nào?
 2. Role context trả lời: vai trò này thường tạo impact qua trách nhiệm và scope nào?
 3. Follow-up playbook trả lời: ở lượt tiếp theo nên hỏi gì để câu chuyện giàu hơn nhưng vẫn trung thực?
+
+Trong authoring, lớp 1 và lớp 3 nên nằm chung một industry context file. Như vậy mỗi ngành tự định nghĩa cả bản đồ vận hành lẫn cách chatbot đào sâu câu chuyện trong ngành đó.
 
 ## Story Slots
 

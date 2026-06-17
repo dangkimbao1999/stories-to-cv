@@ -134,9 +134,40 @@ describe("industryContextPackSchema", () => {
       achievementPatterns: ["Reduced onboarding drop-off by X%"],
       discoveryQuestions: ["Did you influence conversion, approval rate, fraud, or compliance?"],
       guardrails: ["Do not invent metrics or regulated responsibilities."],
+      conversationFollowUp: {
+        id: "fintech-career-story-excavation",
+        label: "Fintech career story excavation",
+        version: 1,
+        active: true,
+        goal: "Help users tell accurate fintech career stories.",
+        principles: ["Ask one thing at a time."],
+        storySlots: [
+          {
+            id: "personal-contribution",
+            label: "Personal contribution",
+            required: true,
+            question: "Which part did you personally own?",
+            captureTargets: ["owned scope"],
+            followUpHints: ["Separate user contribution from team outcome."],
+          },
+        ],
+        triggers: [
+          {
+            id: "risk-claim",
+            targetSlotId: "personal-contribution",
+            priority: 100,
+            whenUserMentions: ["risk"],
+            question: "Which risk-related part did you personally own?",
+            reason: "Avoid assuming regulated responsibility.",
+          },
+        ],
+        completionCriteria: ["Required story slots have user-stated answers."],
+        guardrails: ["Do not invent regulated responsibilities."],
+      },
     });
 
     expect(pack.coreWorkflows[0]?.commonMetrics).toContain("conversion rate");
+    expect(pack.conversationFollowUp.triggers[0]?.id).toBe("risk-claim");
     expect(pack.guardrails).toContain("Do not invent metrics or regulated responsibilities.");
   });
 

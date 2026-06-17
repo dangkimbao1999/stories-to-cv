@@ -195,3 +195,147 @@ guardrails:
   - "Do not convert team outcomes into individual ownership without asking what part the user personally handled."
   - "Do not imply customer, revenue, or compliance impact unless the user provides evidence."
   - "Use software development context only to ask better questions and propose user-confirmed framings."
+
+conversationFollowUp:
+  id: "software-development-career-story-excavation"
+  label: "Software development career story excavation"
+  version: 1
+  active: true
+  goal: "Help software developers turn vague project memories into accurate stories about scope, contribution, technical decisions, quality, reliability, collaboration, and impact."
+  principles:
+    - "Ask one thing at a time."
+    - "Separate team delivery from the user's direct contribution before writing facts."
+    - "Ask for system, workflow, and user impact before assuming business impact."
+    - "Accept proxy evidence such as latency, error rate, defects, incidents, adoption, cycle time, PRs, tickets, or feedback."
+    - "Never invent stack, scale, traffic, uptime, ownership, or leadership."
+
+  storySlots:
+    - id: "scope"
+      label: "Software story scope"
+      required: true
+      question: "Which product, platform, system, workflow, or user problem did this work affect?"
+      captureTargets:
+        - "product or system"
+        - "workflow"
+        - "user or operator problem"
+      followUpHints:
+        - "Help the user locate the story in feature delivery, backend, frontend, QA, reliability, or modernization."
+
+    - id: "personal-contribution"
+      label: "Personal contribution"
+      required: true
+      question: "Which part did you personally own, implement, debug, design, review, or coordinate?"
+      captureTargets:
+        - "owned implementation"
+        - "technical decision"
+        - "review or coordination role"
+      followUpHints:
+        - "Separate the user's work from team delivery."
+        - "Ask for the exact component, service, flow, test, migration step, or incident action."
+
+    - id: "technical-context"
+      label: "Technical context"
+      required: true
+      question: "What technical context matters here: API, frontend flow, database, test suite, CI/CD, infrastructure, observability, or migration path?"
+      captureTargets:
+        - "technical surface"
+        - "system dependency"
+        - "implementation constraint"
+      followUpHints:
+        - "Ask about stack only if the user mentions it or it is necessary to understand the story."
+
+    - id: "impact-metric"
+      label: "Impact metric"
+      required: true
+      question: "What changed after your work: latency, error rate, defects, release time, uptime, adoption, support tickets, or developer time?"
+      captureTargets:
+        - "before state"
+        - "after state"
+        - "metric or proxy signal"
+      followUpHints:
+        - "If exact numbers are unavailable, ask for directional evidence or proxy signals."
+
+    - id: "quality-risk"
+      label: "Quality and risk"
+      required: false
+      question: "What quality, reliability, security, maintainability, or rollout risk did you have to manage?"
+      captureTargets:
+        - "technical risk"
+        - "quality control"
+        - "rollout strategy"
+      followUpHints:
+        - "Software stories become stronger when they show judgment under technical constraints."
+
+    - id: "evidence"
+      label: "Evidence"
+      required: false
+      question: "What private evidence could verify this later: PR, ticket, dashboard, incident report, release note, test result, or feedback?"
+      captureTargets:
+        - "source artifact"
+        - "dashboard or report"
+        - "feedback"
+      followUpHints:
+        - "Ask for source type first, not sensitive content."
+
+  triggers:
+    - id: "team-delivery-claim"
+      targetSlotId: "personal-contribution"
+      priority: 110
+      whenUserMentions:
+        - "we built"
+        - "we shipped"
+        - "our team"
+        - "my team"
+      question: "Which part did you personally own, implement, debug, design, review, or coordinate?"
+      reason: "Software delivery is often team-based, so personal contribution must be clarified before writing facts."
+
+    - id: "performance-claim"
+      targetSlotId: "impact-metric"
+      priority: 100
+      whenUserMentions:
+        - "optimized"
+        - "faster"
+        - "latency"
+        - "performance"
+        - "slow"
+      question: "Do you have a before-and-after signal such as latency, throughput, page load time, error rate, or user-perceived speed?"
+      reason: "Performance stories need concrete or proxy evidence."
+
+    - id: "reliability-claim"
+      targetSlotId: "quality-risk"
+      priority: 95
+      whenUserMentions:
+        - "incident"
+        - "outage"
+        - "reliability"
+        - "uptime"
+        - "alert"
+      question: "What reliability risk or incident pattern were you addressing, and what changed after your work?"
+      reason: "Reliability stories need context about risk, detection, response, and prevention."
+
+    - id: "technical-work-without-context"
+      targetSlotId: "technical-context"
+      priority: 80
+      whenUserMentions:
+        - "api"
+        - "service"
+        - "database"
+        - "frontend"
+        - "test"
+        - "ci"
+        - "migration"
+      question: "What technical context matters here: API, frontend flow, database, test suite, CI/CD, infrastructure, observability, or migration path?"
+      reason: "Technical terms need system context before they become useful career stories."
+
+  completionCriteria:
+    - "Required software story slots have user-stated answers."
+    - "Team delivery is separated from the user's personal contribution."
+    - "Technical work is connected to a user, product, system, quality, reliability, or developer outcome."
+    - "Impact is quantified, described directionally, or marked as needing confirmation."
+    - "Any suggested framing is confirmed before becoming a career fact."
+
+  guardrails:
+    - "Do not invent programming languages, frameworks, cloud providers, databases, scale, traffic, uptime, or latency numbers."
+    - "Do not assume architecture ownership, production ownership, security ownership, or team leadership unless the user states it."
+    - "Do not turn team delivery into individual achievement without explicit contribution."
+    - "Ask for one missing slot at a time."

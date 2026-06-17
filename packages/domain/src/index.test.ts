@@ -232,6 +232,21 @@ describe("domain content registry", () => {
             expect.stringContaining("conversion, approval rate, fraud, or compliance"),
           ]),
           guardrails: expect.arrayContaining([expect.stringContaining("Do not invent metrics")]),
+          conversationFollowUp: expect.objectContaining({
+            id: "fintech-career-story-excavation",
+            storySlots: expect.arrayContaining([
+              expect.objectContaining({
+                id: "regulated-workflow-context",
+                question: expect.stringContaining("regulated workflow"),
+              }),
+            ]),
+            triggers: expect.arrayContaining([
+              expect.objectContaining({
+                id: "compliance-or-risk-claim",
+                targetSlotId: "regulated-workflow-context",
+              }),
+            ]),
+          }),
         }),
       ]),
     );

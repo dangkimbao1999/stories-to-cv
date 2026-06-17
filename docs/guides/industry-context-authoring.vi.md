@@ -55,8 +55,7 @@ Không tạo pack mới nếu khác biệt chỉ là tên công ty, tên sản p
 
 ## Template
 
-Use `docs/guides/industry-context-template.yaml` as the copyable base template. See
-`docs/guides/software-development-industry-context.example.yaml` for a filled example.
+Use `docs/guides/industry-context-template.yaml` as the copyable base template. The template includes both industry context and `conversationFollowUp` in the same file, because follow-up behavior varies by industry. See `docs/guides/software-development-industry-context.example.yaml` for a filled example.
 
 ```yaml
 id: "fintech"

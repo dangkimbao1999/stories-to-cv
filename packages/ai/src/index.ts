@@ -224,6 +224,18 @@ export interface BuildNextCareerStoryFollowUpInput {
   playbook: CareerStoryFollowUpPlaybook;
 }
 
+export interface IndustryWithConversationFollowUp {
+  id: string;
+  label: string;
+  conversationFollowUp: CareerStoryFollowUpPlaybook;
+}
+
+export interface BuildNextIndustryCareerStoryFollowUpInput {
+  latestUserMessage: string;
+  answeredSlotIds: string[];
+  industry: IndustryWithConversationFollowUp;
+}
+
 export interface CareerStoryFollowUp {
   question: string;
   slotId: string | null;
@@ -232,6 +244,16 @@ export interface CareerStoryFollowUp {
   captureTargets: string[];
   safetyReminders: string[];
   isComplete: boolean;
+}
+
+export function buildNextIndustryCareerStoryFollowUp(
+  input: BuildNextIndustryCareerStoryFollowUpInput,
+): CareerStoryFollowUp {
+  return buildNextCareerStoryFollowUp({
+    latestUserMessage: input.latestUserMessage,
+    answeredSlotIds: input.answeredSlotIds,
+    playbook: input.industry.conversationFollowUp,
+  });
 }
 
 export function buildNextCareerStoryFollowUp(input: BuildNextCareerStoryFollowUpInput): CareerStoryFollowUp {
