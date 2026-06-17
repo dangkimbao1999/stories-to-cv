@@ -55,6 +55,9 @@ Không tạo pack mới nếu khác biệt chỉ là tên công ty, tên sản p
 
 ## Template
 
+Use `docs/guides/industry-context-template.yaml` as the copyable base template. See
+`docs/guides/software-development-industry-context.example.yaml` for a filled example.
+
 ```yaml
 id: "fintech"
 label: "Fintech"

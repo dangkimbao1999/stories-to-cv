@@ -1,0 +1,59 @@
+# Copy this file when authoring a new industry context pack.
+# Keep user claims out of this file. This is only context for better questioning.
+
+id: "<stable-kebab-case-industry-id>"
+label: "<Human-readable industry or industry group name>"
+version: 1
+active: true
+summary: "<One or two sentences about how this industry creates value, operates, and what constraints matter.>"
+
+businessModels:
+  - "<How organizations in this industry create revenue or value>"
+  - "<Another common business model>"
+
+coreWorkflows:
+  - id: "<stable-kebab-case-workflow-id>"
+    label: "<Workflow name>"
+    typicalSteps:
+      - "<Step users may have participated in>"
+      - "<Step users may have coordinated or improved>"
+      - "<Step users may have measured or reviewed>"
+    commonMetrics:
+      - "<Metric a user may have influenced or observed>"
+      - "<Another workflow-level metric>"
+
+keyMetrics:
+  - id: "<stable-kebab-case-metric-id>"
+    label: "<Metric name>"
+    category: "<business|product|risk|operations|people>"
+  - id: "<another-metric-id>"
+    label: "<Another metric name>"
+    category: "<business|product|risk|operations|people>"
+
+stakeholders:
+  - "<End users or customers>"
+  - "<Internal collaborator or team>"
+  - "<External partner, vendor, regulator, or operator if relevant>"
+
+commonTools:
+  - "<Tool category or system class>"
+  - "<Another tool category or system class>"
+
+regulatoryConcerns:
+  - "<Privacy, safety, compliance, reliability, or audit concern>"
+  - "<Another constraint where the chatbot must avoid assumptions>"
+
+achievementPatterns:
+  - "<Improved X by Y through Z>"
+  - "<Reduced X from A to B>"
+  - "<Launched or migrated X for Y users, teams, markets, or systems>"
+
+discoveryQuestions:
+  - "<Question that helps the user recall real scope, metric, stakeholder, or trade-off>"
+  - "<Question that probes evidence without implying ownership>"
+  - "<Question that asks for before-and-after state>"
+
+guardrails:
+  - "Do not invent metrics, employers, tools, regulations, responsibilities, or scope."
+  - "Use this context only to ask better questions and propose user-confirmed framings."
+  - "<Industry-specific assumption the chatbot must not make>"
